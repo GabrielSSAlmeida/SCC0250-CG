@@ -1,24 +1,25 @@
 from window import Window
 from models.model import Model
 from models.renderer import Renderer
-from utils.file_loader import load_model_from_file
+from utils.file_loader import FileManager
+from OpenGL.GL import *
 
 def main():
     window = Window()
     renderer = Renderer(window)
 
     # Carregar modelo
-    model_data = load_model_from_file("objects/Harry.obj")
-    vertices = model_data["vertices"]
-    faces = model_data["faces"]
+    verticeInicial_harry, quantosVertices_harry = FileManager.load_obj_and_texture('objects/Harry.obj', [])
 
     # Criar objeto Model
-    harry = Model(vertices, len(faces))
+    harry = Model(verticeInicial_harry, quantosVertices_harry)
     renderer.add_model(harry)
+
+    window.upload_data()
 
     # Exibir janela
     window.show()
-
+    glEnable(GL_DEPTH_TEST)
     while not window.should_close():
         renderer.render()
 
