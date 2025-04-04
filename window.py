@@ -27,12 +27,17 @@ class Window:
     def should_close(self):
         return glfw.window_should_close(self.glfw_window)
 
-    """ def update(self):
-        glfw.poll_events()
-        glfw.swap_buffers(self.glfw_window) """
-
     def terminate(self):
         glfw.terminate()
+
+    def enable(self):
+        glEnable(GL_DEPTH_TEST)
+
+    def poll_events(self):
+        glfw.poll_events()
+
+    def swap_buffers(self):
+        glfw.swap_buffers(self.glfw_window)
 
     def upload_data(self):
         vertices = np.zeros(len(FileManager.vertices_list), [("position", np.float32, 3)])

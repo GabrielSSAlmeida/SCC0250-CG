@@ -15,11 +15,11 @@ def main():
     harry = Model(verticeInicial_harry, quantosVertices_harry)
     renderer.add_model(harry)
 
-    window.upload_data()
 
     # Exibir janela
+    window.upload_data()
     window.show()
-    glEnable(GL_DEPTH_TEST)
+    window.enable()
     while not window.should_close():
         renderer.render()
 
