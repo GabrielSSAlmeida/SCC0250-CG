@@ -4,11 +4,13 @@ import math
 from OpenGL.GL import *
 
 class Model:
-    def __init__(self, vertices, num_vertices):
+    def __init__(self, vertices, num_vertices, modelConfig, color=(0.0, 0.0, 0.0, 1)):
         self.vertices = vertices
         self.num_vertices = num_vertices
+        self.modelConfig = modelConfig
+        self.color = color
 
-    def get_transform_matrix(self, angle=0, r_x=0, r_y=0, r_z=1, t_x=0, t_y=0, t_z=0, s_x=0.2, s_y=0.2, s_z=0.2):
+    def get_transform_matrix(self, angle=0.0, r_x=0.0, r_y=0.0, r_z=0.0, t_x=0.0, t_y=0.0, t_z=0.0, s_x=1.0, s_y=1.0, s_z=1.0):
         angle = math.radians(angle)
         matrix_transform = glm.mat4(1.0) # instanciando uma matriz identidade
 
@@ -24,11 +26,11 @@ class Model:
         
         return np.array(matrix_transform)
 
-    def draw(self, program, color=(0.0, 0.0, 0.0, 1)):
+    def draw(self, program):
         loc_color = glGetUniformLocation(program, "color")
-        glUniform4f(loc_color, *color)
+        glUniform4f(loc_color, *self.color)
         
-        mat_model = self.get_transform_matrix()
+        mat_model = self.get_transform_matrix(**self.modelConfig)
         loc_model = glGetUniformLocation(program, "model")
         glUniformMatrix4fv(loc_model, 1, GL_TRUE, mat_model)
 
