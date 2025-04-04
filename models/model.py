@@ -32,4 +32,4 @@ class Model:
         loc_model = glGetUniformLocation(program, "model")
         glUniformMatrix4fv(loc_model, 1, GL_TRUE, mat_model)
 
-        glDrawArrays(GL_TRIANGLE_STRIP, self.vertices, self.num_vertices)
+        glDrawArrays(GL_TRIANGLES, self.vertices, self.num_vertices)
