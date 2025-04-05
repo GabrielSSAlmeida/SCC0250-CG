@@ -1,13 +1,13 @@
 from OpenGL.GL import *
 from window import Window
-from models.model import Model
+from models.model import ModelBase
 from typing import List
 
 
 class Renderer:
     def __init__(self, window):
         self.window: Window = window
-        self.models: List[Model] = []
+        self.models: List[ModelBase] = []
 
     def add_model(self, model):
         self.models.append(model)

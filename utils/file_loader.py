@@ -86,3 +86,32 @@ class FileManager:
             Texture.load(id,texturesList[id])
         
         return verticeInicial, verticeFinal - verticeInicial
+    
+    @classmethod
+    def load_obj_2D_and_texture(cls, objFile, texturesList=[]):
+        modelo = cls.load_model_from_file(objFile)
+
+        verticeInicial = len(cls.vertices_list)
+        print(f'Processando modelo 2D {objFile}. Vértice inicial: {verticeInicial}')
+        faces_visited = []
+
+        for face in modelo['faces']:
+            if face[2] not in faces_visited:
+                faces_visited.append(face[2])
+
+            # Assumindo que as coordenadas estão no plano XY (Z será 0.0)
+            for vertice_id in cls.circular_sliding_window_of_three(face[0]):
+                vertice = modelo['vertices'][vertice_id - 1]
+                vertice_2d = (vertice[0], vertice[1], 0.0)  # Força Z como 0.0
+                cls.vertices_list.append(vertice_2d)
+
+            for texture_id in cls.circular_sliding_window_of_three(face[1]):
+                cls.textures_coord_list.append(modelo['texture'][texture_id - 1])
+
+        verticeFinal = len(cls.vertices_list)
+        print(f'Processando modelo 2D {objFile}. Vértice final: {verticeFinal}')
+
+        for id in range(len(texturesList)):
+            Texture.load(id, texturesList[id])
+
+        return verticeInicial, verticeFinal - verticeInicial
