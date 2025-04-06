@@ -8,7 +8,7 @@ from utils.file_loader import FileManager
 from keymanager import KeyManager
 from utils.custom_keys_callbacks import *
 from OpenGL.GL import *
-from constants import *
+from config import *
 import glfw
 
 def main():

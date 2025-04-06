@@ -11,7 +11,7 @@ class Model_2D(ModelBase):
 
     def get_transform_matrix(self, angle_x=0.0, angle_y=0.0, angle_z=0.0,
                              t_x=0.0, t_y=0.0,
-                             s_x=1.0, s_y=1.0):
+                             s_x=1.0, s_y=1.0, **keyargs):
         angle_x = math.radians(angle_x)
         angle_y = math.radians(angle_y)
         angle_z = math.radians(angle_z)

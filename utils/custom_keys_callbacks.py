@@ -14,6 +14,8 @@ def nimbus_t_and_r(model, dx=0, dy=0, angle_x=None, angle_y=None, angle_z=None):
     config['t_x'] += dx
     config['t_y'] += dy
 
+    if config["t_y"] > config["upper_lim"]:
+        config["t_y"] = config["upper_lim"]
 
     if angle_x is not None:
         config['angle_x'] = angle_x

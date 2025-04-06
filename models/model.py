@@ -43,6 +43,12 @@ class ModelBase(ABC):
         self.modelConfig["t_y"] = self.modelConfig.get("t_y", 0) + dy
         self.modelConfig["t_z"] = self.modelConfig.get("t_z", 0) + dz
 
+        if "upper_lim" in self.modelConfig:
+            if self.modelConfig["t_y"] > self.modelConfig["upper_lim"]:
+                self.modelConfig["t_y"] = self.modelConfig["upper_lim"]
+            elif self.modelConfig["t_y"] < self.modelConfig["lower_lim"]:
+                self.modelConfig["t_y"] = self.modelConfig["lower_lim"]
+
     def scale(self, sx=1, sy=1, sz=1):
         self.modelConfig["s_x"] = self.modelConfig.get("s_x", 1) * sx
         self.modelConfig["s_y"] = self.modelConfig.get("s_y", 1) * sy
