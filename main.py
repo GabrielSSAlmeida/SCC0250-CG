@@ -1,4 +1,4 @@
-# 05/04/2025 18:20
+# 06/04/2025 14:55
 
 from window import Window
 from models.model_3D import Model_3D
@@ -10,6 +10,24 @@ from OpenGL.GL import *
 from constants import *
 import glfw
 
+key_state = {
+        #  HARRY
+        glfw.KEY_Y: False,
+        #  POMO
+        glfw.KEY_UP: False,
+        glfw.KEY_DOWN: False,
+        glfw.KEY_LEFT: False,
+        glfw.KEY_RIGHT: False,
+        glfw.KEY_I: False,
+        glfw.KEY_O: False,
+        glfw.KEY_L: False,
+        glfw.KEY_K: False,
+        # VASSOURA
+        glfw.KEY_W: False,
+        glfw.KEY_S: False,
+        glfw.KEY_A: False,
+        glfw.KEY_D: False,
+}
 
 def main():
     window = Window()
@@ -53,8 +71,14 @@ def main():
     }
     
     def key_event(w, key, scancode, action, mods):
-        if key in key_map:
-            if action in [glfw.PRESS, glfw.REPEAT]:
+
+        if action == 1 and (key in key_map):
+            key_state[key] = True
+        elif action == 0 and (key in key_map):
+            key_state[key] = False
+
+        for key in key_state:
+            if key_state[key] == True:
                 func, model = key_map[key]
                 if not isinstance(model, list):
                     model = [model]
