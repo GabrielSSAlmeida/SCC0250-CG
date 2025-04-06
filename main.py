@@ -5,29 +5,11 @@ from models.model_3D import Model_3D
 from models.model_2D import Model_2D
 from models.renderer import Renderer
 from utils.file_loader import FileManager
+from keymanager import KeyManager
 from utils.custom_keys_callbacks import *
 from OpenGL.GL import *
 from constants import *
 import glfw
-
-key_state = {
-        #  HARRY
-        glfw.KEY_Y: False,
-        #  POMO
-        glfw.KEY_UP: False,
-        glfw.KEY_DOWN: False,
-        glfw.KEY_LEFT: False,
-        glfw.KEY_RIGHT: False,
-        glfw.KEY_I: False,
-        glfw.KEY_O: False,
-        glfw.KEY_L: False,
-        glfw.KEY_K: False,
-        # VASSOURA
-        glfw.KEY_W: False,
-        glfw.KEY_S: False,
-        glfw.KEY_A: False,
-        glfw.KEY_D: False,
-}
 
 def main():
     window = Window()
@@ -49,49 +31,28 @@ def main():
     nimbus = Model_3D(verticeInicial_nimbus, quantosVertices_nimbus, NIMBUS, (0.7, 0.5, 0.3, 1))
     chapeu = Model_3D(verticeInicial_chapeu, quantosVertices_chapeu, CHAPEU, (0.4, 0.2, 0, 1))
 
-    key_map = {
-        glfw.KEY_R: (lambda m: m.reset(), [harry, pomo, nimbus, chapeu]),
-        #   HARRY
-        glfw.KEY_Y: (lambda m: m.rotate(5, 0, 1, 0), [harry, chapeu]),
-        #   POMO
-        glfw.KEY_UP: (lambda m: m.translate(0, 0.05, 0), pomo),
-        glfw.KEY_DOWN: (lambda m: m.translate(0, -0.05, 0), pomo),
-        glfw.KEY_LEFT: (lambda m: m.translate(-0.05, 0, 0), pomo),
-        glfw.KEY_RIGHT: (lambda m: m.translate(0.05, 0, 0), pomo),
-        glfw.KEY_I: (lambda m: m.rotate(5, 0, 1, 0), pomo),
-        glfw.KEY_O: (lambda m: m.rotate(5, 1, 0, 0), pomo),
-        glfw.KEY_L: (lambda m: m.scale(1.1, 1.1, 1.1), pomo),
-        glfw.KEY_K: (lambda m: m.scale(0.9, 0.9, 0.9), pomo),
-        # VASSOURA
-        glfw.KEY_W: (lambda m: nimbus_t_and_r(m, dx=0, dy=0.05, angle_z=0), nimbus),
-        glfw.KEY_S: (lambda m: nimbus_t_and_r(m, dx=0, dy=-0.05, angle_z=180), nimbus),
-        glfw.KEY_A: (lambda m: nimbus_t_and_r(m, dx=-0.05, dy=0, angle_z=90), nimbus),
-        glfw.KEY_D: (lambda m: nimbus_t_and_r(m, dx=0.05, dy=0, angle_z=270), nimbus),
+    keymanager = KeyManager(window, renderer)
+    keymanager.set_key(glfw.KEY_R, lambda m: m.reset(), [harry, pomo, nimbus, chapeu])
 
-    }
-    
-    def key_event(w, key, scancode, action, mods):
+    # HARRY
+    keymanager.set_key(glfw.KEY_Y, lambda m: m.rotate(5, 0, 1, 0), [harry, chapeu])
 
-        if action == 1 and (key in key_map):
-            key_state[key] = True
-        elif action == 0 and (key in key_map):
-            key_state[key] = False
+    # POMO DE OURO
+    keymanager.set_key(glfw.KEY_UP, lambda m: m.translate(0, 0.05, 0), pomo)
+    keymanager.set_key(glfw.KEY_DOWN, lambda m: m.translate(0, -0.05, 0), pomo)
+    keymanager.set_key(glfw.KEY_LEFT, lambda m: m.translate(-0.05, 0, 0), pomo)
+    keymanager.set_key(glfw.KEY_RIGHT, lambda m: m.translate(0.05, 0, 0), pomo)
+    keymanager.set_key(glfw.KEY_I, lambda m: m.rotate(5, 0, 1, 0), pomo)
+    keymanager.set_key(glfw.KEY_O, lambda m: m.rotate(5, 1, 0, 0), pomo)
+    keymanager.set_key(glfw.KEY_L, lambda m: m.scale(1.1, 1.1, 1.1), pomo)
+    keymanager.set_key(glfw.KEY_K, lambda m: m.scale(0.9, 0.9, 0.9), pomo)
 
-        for key in key_state:
-            if key_state[key] == True:
-                func, model = key_map[key]
-                if not isinstance(model, list):
-                    model = [model]
-                for m in model:
-                    func(m)
+    # NIMBUS 2000
+    keymanager.set_key(glfw.KEY_W, lambda m: nimbus_t_and_r(m, dx=0, dy=0.05, angle_z=0), nimbus)
+    keymanager.set_key(glfw.KEY_S, lambda m: nimbus_t_and_r(m, dx=0, dy=-0.05, angle_z=180), nimbus)
+    keymanager.set_key(glfw.KEY_A, lambda m: nimbus_t_and_r(m, dx=-0.05, dy=0, angle_z=90), nimbus)
+    keymanager.set_key(glfw.KEY_D, lambda m: nimbus_t_and_r(m, dx=0.05, dy=0, angle_z=270), nimbus)
 
-        if key == glfw.KEY_P and (action == glfw.PRESS or action == glfw.REPEAT):
-            renderer.setPolygonMode()
-        if key == glfw.KEY_ESCAPE and (action == glfw.PRESS or action == glfw.REPEAT):
-            window.close()
-
-
-    glfw.set_key_callback(window.glfw_window, key_event)
 
     renderer.add_model([grama, harry, arco, pomo, nimbus, chapeu])
     
