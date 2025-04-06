@@ -1,6 +1,3 @@
-import glm
-import numpy as np
-import math
 from OpenGL.GL import *
 from abc import ABC, abstractmethod
 
@@ -10,6 +7,7 @@ class ModelBase(ABC):
         self.num_vertices = num_vertices
         self.modelConfig = modelConfig
         self.color = color
+        self.type = modelConfig['type']
 
         self.initConfig = {}
         for key, val in modelConfig.items():
