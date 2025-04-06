@@ -36,6 +36,7 @@ class ModelBase(ABC):
         for key, val in self.initConfig.items():
             self.modelConfig[key] = val
 
+    # Geometric transformations for models
     def translate(self, dx=0, dy=0, dz=0):
         self.modelConfig["t_x"] = self.modelConfig.get("t_x", 0) + dx
         self.modelConfig["t_y"] = self.modelConfig.get("t_y", 0) + dy

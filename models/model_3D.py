@@ -10,9 +10,10 @@ class Model_3D(ModelBase):
     def primitive_type(self):
         return GL_TRIANGLES
 
+    # implements get_transform_matrix
     def get_transform_matrix(self, angle_x=0.0, angle_y=0.0, angle_z=0.0,
                          t_x=0.0, t_y=0.0, t_z=0.0,
-                         s_x=1.0, s_y=1.0, s_z=1.0, **keyargs):
+                         s_x=1.0, s_y=1.0, s_z=1.0, **kwargs):
 
         angle_x = math.radians(angle_x)
         angle_y = math.radians(angle_y)
