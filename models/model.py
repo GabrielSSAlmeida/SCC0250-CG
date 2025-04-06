@@ -41,8 +41,11 @@ class ModelBase(ABC):
         self.modelConfig["s_z"] = self.modelConfig.get("s_z", 1) * sz
 
     def rotate(self, angle=0, rx=0, ry=0, rz=0):
-        self.modelConfig["angle"] = self.modelConfig.get("angle", 0) + angle
-        self.modelConfig["r_x"] = rx
-        self.modelConfig["r_y"] = ry
-        self.modelConfig["r_z"] = rz
+        if rx:
+            self.modelConfig["angle_x"] = self.modelConfig.get("angle_x", 0) + angle
+        if ry:
+            self.modelConfig["angle_y"] = self.modelConfig.get("angle_y", 0) + angle
+        if rz:
+            self.modelConfig["angle_z"] = self.modelConfig.get("angle_z", 0) + angle
+
 
