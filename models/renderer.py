@@ -8,16 +8,26 @@ class Renderer:
     def __init__(self, window):
         self.window: Window = window
         self.models: List[ModelBase] = []
+        self.polygonMode = GL_FILL
 
     def add_model(self, model):
-        self.models.append(model)
+        if not isinstance(model, list):
+            model = [model]
+        for m in model:
+            self.models.append(m)
+        
+    def setPolygonMode(self):
+        if self.polygonMode == GL_FILL:
+            self.polygonMode = GL_LINE
+        else:
+            self.polygonMode = GL_FILL
 
     def render(self):
         self.window.poll_events()
         
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glClearColor(0.42, 0.65, 0.95, 1)
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
+        glPolygonMode(GL_FRONT_AND_BACK, self.polygonMode)
 
         for model in self.models:
             model.draw(self.window.program)

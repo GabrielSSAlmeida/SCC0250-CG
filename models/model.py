@@ -11,6 +11,10 @@ class ModelBase(ABC):
         self.modelConfig = modelConfig
         self.color = color
 
+        self.initConfig = {}
+        for key, val in modelConfig.items():
+            self.initConfig[key] = val
+
     @abstractmethod
     def get_transform_matrix(self, **kwargs):
         pass
@@ -29,6 +33,10 @@ class ModelBase(ABC):
         glUniformMatrix4fv(loc_model, 1, GL_TRUE, mat_model)
 
         glDrawArrays(self.primitive_type, self.vertices, self.num_vertices)
+    
+    def reset(self):
+        for key, val in self.initConfig.items():
+            self.modelConfig[key] = val
 
     def translate(self, dx=0, dy=0, dz=0):
         self.modelConfig["t_x"] = self.modelConfig.get("t_x", 0) + dx

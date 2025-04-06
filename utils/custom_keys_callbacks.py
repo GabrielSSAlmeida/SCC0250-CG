@@ -21,4 +21,3 @@ def nimbus_t_and_r(model, dx=0, dy=0, angle_x=None, angle_y=None, angle_z=None):
         config['angle_y'] = angle_y
     if angle_z is not None:
         config['angle_z'] = angle_z
-        

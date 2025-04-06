@@ -24,6 +24,9 @@ class Window:
     def show(self):
         glfw.show_window(self.glfw_window)
 
+    def close(self):
+        glfw.set_window_should_close(self.glfw_window, True)
+
     def should_close(self):
         return glfw.window_should_close(self.glfw_window)
 

@@ -7,6 +7,7 @@ from models.renderer import Renderer
 from utils.file_loader import FileManager
 from utils.custom_keys_callbacks import *
 from OpenGL.GL import *
+from constants import *
 import glfw
 
 
@@ -23,14 +24,15 @@ def main():
     verticeInicial_grama, quantosVertices_grama = FileManager.load_obj_2D_and_texture('objects/Quadrado.obj', [])
 
     # Criar objeto Model
-    grama = Model_2D(verticeInicial_grama, quantosVertices_grama, {"t_x": -3.0, "t_y": -3.0, "angle_x": 5, "s_x": 0.05, "s_y": 0.028}, (0.19, 0.85, 0.5, 1))
-    harry = Model_3D(verticeInicial_harry, quantosVertices_harry, {"t_x": -0.5, "t_y": -0.3, "angle_x": -30, "s_x": 0.15, "s_y": 0.15, "s_z": 0.15}, (1, 0.9, 0.8, 1))
-    arco = Model_3D(verticeInicial_arco, quantosVertices_arco, {"t_x": 0.6, "angle_y": -40, "s_x": 0.1, "s_y": 0.1, "s_z": 0.1}, (0.5, 0.5, 0.5, 1))
-    pomo = Model_3D(verticeInicial_pomo, quantosVertices_pomo, {"t_x": -0.6, "t_y": 0.6, "t_z": 0.001, "angle_x": 20, "s_x": 0.04, "s_y": 0.04, "s_z": 0.04}, (1, 1, 0, 1))
-    nimbus = Model_3D(verticeInicial_nimbus, quantosVertices_nimbus, {"t_x": -0.27, "t_y": -0.3, "angle_x": -10, "s_x": 0.1, "s_y": 0.1, "s_z": 0.1}, (0.7, 0.5, 0.3, 1))
-    chapeu = Model_3D(verticeInicial_chapeu, quantosVertices_chapeu, {"t_x": -0.5, "t_y": 0.05, "t_z": -0.16, "angle_x": -30, "s_x": 0.11, "s_y": 0.11, "s_z": 0.11}, (0.4, 0.2, 0, 1))
+    grama = Model_2D(verticeInicial_grama, quantosVertices_grama, GRAMA, (0.19, 0.85, 0.5, 1))
+    harry = Model_3D(verticeInicial_harry, quantosVertices_harry, HARRY, (1, 0.9, 0.8, 1))
+    arco = Model_3D(verticeInicial_arco, quantosVertices_arco, ARCO, (0.5, 0.5, 0.5, 1))
+    pomo = Model_3D(verticeInicial_pomo, quantosVertices_pomo, POMO, (1, 1, 0, 1))
+    nimbus = Model_3D(verticeInicial_nimbus, quantosVertices_nimbus, NIMBUS, (0.7, 0.5, 0.3, 1))
+    chapeu = Model_3D(verticeInicial_chapeu, quantosVertices_chapeu, CHAPEU, (0.4, 0.2, 0, 1))
 
     key_map = {
+        glfw.KEY_R: (lambda m: m.reset(), [harry, pomo, nimbus, chapeu]),
         #   HARRY
         glfw.KEY_Y: (lambda m: m.rotate(5, 0, 1, 0), [harry, chapeu]),
         #   POMO
@@ -50,27 +52,25 @@ def main():
 
     }
     
-    def key_event(window, key, scancode, action, mods):
-        if action in [glfw.PRESS, glfw.REPEAT]:
-            if key in key_map:
+    def key_event(w, key, scancode, action, mods):
+        if key in key_map:
+            if action in [glfw.PRESS, glfw.REPEAT]:
                 func, model = key_map[key]
-                if isinstance(model, list):
-                    for m in model:
-                        func(m)
-                else:
-                    func(model)
+                if not isinstance(model, list):
+                    model = [model]
+                for m in model:
+                    func(m)
+
+        if key == glfw.KEY_P and (action == glfw.PRESS or action == glfw.REPEAT):
+            renderer.setPolygonMode()
+        if key == glfw.KEY_ESCAPE and (action == glfw.PRESS or action == glfw.REPEAT):
+            window.close()
+
 
     glfw.set_key_callback(window.glfw_window, key_event)
 
-    renderer.add_model(grama)
-    renderer.add_model(harry)
-    renderer.add_model(arco)
-    renderer.add_model(pomo)
-    renderer.add_model(nimbus)
-    renderer.add_model(chapeu)
+    renderer.add_model([grama, harry, arco, pomo, nimbus, chapeu])
     
-
-
     # Exibir janela
     window.upload_data()
     window.show()
