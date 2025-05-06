@@ -10,19 +10,27 @@
 
 """
 from window import Window
+from view import View
+from projection import Projection
 from models.model_3D import Model_3D
 from models.model_2D import Model_2D
 from models.renderer import Renderer
 from utils.file_loader import FileManager
 from keymanager import KeyManager
+from mousemanager import MouseManager
 from utils.custom_keys_callbacks import *
 from OpenGL.GL import *
 from config import *
 import glfw
+import glm
 
 def main():
+    fov = 45.0
+    deltaTime = 0.001
     window = Window()
-    renderer = Renderer(window)
+    view = View(glm.vec3(0.0, 0.0, 5.0), glm.vec3(0.0, 0.0, 0.0), glm.vec3(0.0, 1.0, 0.0), deltaTime)
+    projection = Projection(window.altura, window.largura, fov)
+    renderer = Renderer(window, view, projection.mat_projection)
 
     # load models
     verticeInicial_harry, quantosVertices_harry = FileManager.load_obj_and_texture('objects/Harry.obj', [])
@@ -41,27 +49,9 @@ def main():
     chapeu = Model_3D(verticeInicial_chapeu, quantosVertices_chapeu, CHAPEU, (0.4, 0.2, 0, 1))
 
     # ====== KEY MANAGER ======
-    keymanager = KeyManager(window, renderer)
-    keymanager.set_key(glfw.KEY_R, lambda m: m.reset(), [harry, pomo, nimbus, chapeu])
+    keymanager = KeyManager(window, renderer, view)
+    mousemanager = MouseManager(window, view, projection)
 
-    # HARRY
-    keymanager.set_key(glfw.KEY_Y, lambda m: harry_crazy_chapeu(m), [harry, chapeu])
-
-    # POMO DE OURO
-    keymanager.set_key(glfw.KEY_UP, lambda m: m.translate(0, 0.05, 0), pomo)
-    keymanager.set_key(glfw.KEY_DOWN, lambda m: m.translate(0, -0.05, 0), pomo)
-    keymanager.set_key(glfw.KEY_LEFT, lambda m: m.translate(-0.05, 0, 0), pomo)
-    keymanager.set_key(glfw.KEY_RIGHT, lambda m: m.translate(0.05, 0, 0), pomo)
-    keymanager.set_key(glfw.KEY_I, lambda m: m.rotate(5, 0, 1, 0), pomo)
-    keymanager.set_key(glfw.KEY_O, lambda m: m.rotate(5, 1, 0, 0), pomo)
-    keymanager.set_key(glfw.KEY_L, lambda m: m.scale(1.1, 1.1, 1.1), pomo)
-    keymanager.set_key(glfw.KEY_K, lambda m: m.scale(0.9, 0.9, 0.9), pomo)
-
-    # NIMBUS 2000
-    keymanager.set_key(glfw.KEY_W, lambda m: nimbus_t_and_r(m, dx=0, dy=0.05, angle_z=0), nimbus)
-    keymanager.set_key(glfw.KEY_S, lambda m: nimbus_t_and_r(m, dx=0, dy=-0.05, angle_z=180), nimbus)
-    keymanager.set_key(glfw.KEY_A, lambda m: nimbus_t_and_r(m, dx=-0.05, dy=0, angle_z=90), nimbus)
-    keymanager.set_key(glfw.KEY_D, lambda m: nimbus_t_and_r(m, dx=0.05, dy=0, angle_z=270), nimbus)
 
 
     # prepare models to render

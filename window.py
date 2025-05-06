@@ -9,6 +9,9 @@ class Window:
         glfw.init()
         glfw.window_hint(glfw.VISIBLE, glfw.FALSE)
 
+        self.largura = width
+        self.altura = height
+        
         self.glfw_window = glfw.create_window(width, height, title, None, None)
 
         if not self.glfw_window:

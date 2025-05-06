@@ -1,4 +1,5 @@
 import glfw
+import glm
 
 key_state = {
         #  HARRY
@@ -20,10 +21,11 @@ key_state = {
 }
 
 class KeyManager:
-    def __init__(self, window, renderer):
+    def __init__(self, window, renderer, view):
         self.window = window
         self.renderer = renderer
         self.key_map = {}
+        self.view = view
         glfw.set_key_callback(window.glfw_window, self.key_event)
 
     # Sets a specific function to a model for a key
@@ -33,21 +35,38 @@ class KeyManager:
         self.key_map[key] = (action, models)
 
     def key_event(self, w, key, scancode, action, mods):
-        # General scene keys
         if key == glfw.KEY_P and (action == glfw.PRESS or action == glfw.REPEAT):
             self.renderer.setPolygonMode()
         if key == glfw.KEY_ESCAPE and (action == glfw.PRESS or action == glfw.REPEAT):
             self.window.close()
 
-        # Keys referring to a model
+        cameraSpeed = 200 * self.view.deltaTime
+
+        if key == glfw.KEY_UP and (action == glfw.PRESS or action == glfw.REPEAT):
+            self.view.cameraPos += cameraSpeed * self.view.cameraFront
+        if key == glfw.KEY_DOWN and (action == glfw.PRESS or action == glfw.REPEAT):
+            self.view.cameraPos -= cameraSpeed * self.view.cameraFront
+        if key == glfw.KEY_LEFT and (action == glfw.PRESS or action == glfw.REPEAT):
+            self.view.cameraPos -= glm.normalize(glm.cross(self.view.cameraFront, self.view.cameraUp)) * cameraSpeed
+        if key == glfw.KEY_RIGHT and (action == glfw.PRESS or action == glfw.REPEAT):
+            self.view.cameraPos += glm.normalize(glm.cross(self.view.cameraFront, self.view.cameraUp)) * cameraSpeed
+        
+        if key == glfw.KEY_SPACE and (action == glfw.PRESS or action == glfw.REPEAT):
+            self.view.cameraPos += cameraSpeed * glm.vec3(0.0, 1.0, 0.0)
+
+        if key == glfw.KEY_LEFT_CONTROL and (action == glfw.PRESS or action == glfw.REPEAT):
+            self.view.cameraPos -= cameraSpeed * glm.vec3(0.0, 1.0, 0.0)
+
+        self.view.update_view_matrix()
+
+        # Model keys
         if action == 1 and (key in self.key_map):
             key_state[key] = True
         elif action == 0 and (key in self.key_map):
             key_state[key] = False
 
-        # runs the functions of all pressed keys (state = True)
         for key in key_state:
-            if key_state[key] == True:
+            if key_state[key]:
                 func, model = self.key_map[key]
                 if not isinstance(model, list):
                     model = [model]

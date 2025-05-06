@@ -5,9 +5,11 @@ from typing import List
 
 
 class Renderer:
-    def __init__(self, window):
+    def __init__(self, window, view, mat_projection):
         self.window: Window = window
         self.models: List[ModelBase] = []
+        self.view = view
+        self.mat_projection: List = mat_projection
         self.polygonMode = GL_FILL
 
     # add models to the list that renders
@@ -27,10 +29,17 @@ class Renderer:
         self.window.poll_events()
         
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-        glClearColor(0.42, 0.65, 0.95, 1) # blue sky
+        glClearColor(1.0, 1.0, 1.0, 1) # white background
         glPolygonMode(GL_FRONT_AND_BACK, self.polygonMode)
 
         for model in self.models:
             model.draw(self.window.program)
+        
+        self.view.update_view_matrix()
+        loc_view = glGetUniformLocation(self.window.program, "view")
+        glUniformMatrix4fv(loc_view, 1, GL_TRUE, self.view.mat_view)
+
+        loc_projection = glGetUniformLocation(self.window.program, "projection")
+        glUniformMatrix4fv(loc_projection, 1, GL_TRUE, self.mat_projection)    
 
         self.window.swap_buffers()
