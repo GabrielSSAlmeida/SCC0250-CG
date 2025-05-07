@@ -1,0 +1,87 @@
+# Blender 3.6.22 MTL File: 'None'
+# www.blender.org
+
+newmtl Hacha
+Ns 655.328796
+Ka 1.000000 1.000000 1.000000
+Kd 0.207917 0.207917 0.207917
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 3
+
+newmtl Luz
+Ns 1000.000000
+Ka 0.690476 0.690476 0.690476
+Kd 0.800000 0.652405 0.010238
+Ks 0.500000 0.500000 0.500000
+Ke 0.517334 0.344417 0.000000
+Ni 1.450000
+d 1.000000
+illum 3
+
+newmtl MaderaClara
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd textures/Madera_clara_Albedo.png
+map_Bump -bm 1.000000 textures/Madera_clara_Normal.png
+
+newmtl Material.001
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd textures/Jardin_raices_Diffuse.png
+
+newmtl Pared
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd textures/Pared_piedra_musgo_2K_Albedo.png
+map_Ns textures/Pared_piedra_musgo_2K_Roughness.png
+map_Bump -bm 2.800000 textures/Pared_piedra_musgo_2K_Normal.png
+
+newmtl Puerta
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd textures/Madera_puerta_Albedo.png
+map_Ns textures/Madera_puerta_Roughness.png
+map_Bump -bm 1.000000 textures/Madera_puerta_Normal.png
+
+newmtl Tejado
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd textures/Metal_oxidado_Azul_Albedo.png
+map_Ks textures/Metal_oxidado_Azul_Specular.png
+map_Ns textures/Metal_oxidado_Azul_Roughness.png
+map_refl textures/Metal_oxidado_Azul_Metalness.png
+map_Bump -bm 1.000000 textures/Metal_oxidado_Azul_Normal.png
+
+newmtl anillo
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.000000 0.000000 0.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 3

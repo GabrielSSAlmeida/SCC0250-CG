@@ -42,13 +42,13 @@ class KeyManager:
 
         cameraSpeed = 200 * self.view.deltaTime
 
-        if key == glfw.KEY_UP and (action == glfw.PRESS or action == glfw.REPEAT):
+        if key == glfw.KEY_W and (action == glfw.PRESS or action == glfw.REPEAT):
             self.view.cameraPos += cameraSpeed * self.view.cameraFront
-        if key == glfw.KEY_DOWN and (action == glfw.PRESS or action == glfw.REPEAT):
+        if key == glfw.KEY_S and (action == glfw.PRESS or action == glfw.REPEAT):
             self.view.cameraPos -= cameraSpeed * self.view.cameraFront
-        if key == glfw.KEY_LEFT and (action == glfw.PRESS or action == glfw.REPEAT):
+        if key == glfw.KEY_A and (action == glfw.PRESS or action == glfw.REPEAT):
             self.view.cameraPos -= glm.normalize(glm.cross(self.view.cameraFront, self.view.cameraUp)) * cameraSpeed
-        if key == glfw.KEY_RIGHT and (action == glfw.PRESS or action == glfw.REPEAT):
+        if key == glfw.KEY_D and (action == glfw.PRESS or action == glfw.REPEAT):
             self.view.cameraPos += glm.normalize(glm.cross(self.view.cameraFront, self.view.cameraUp)) * cameraSpeed
         
         if key == glfw.KEY_SPACE and (action == glfw.PRESS or action == glfw.REPEAT):

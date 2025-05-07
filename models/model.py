@@ -2,7 +2,7 @@ from OpenGL.GL import *
 from abc import ABC, abstractmethod
 
 class ModelBase(ABC):
-    def __init__(self, vertices, num_vertices, modelConfig, color=(0.0, 0.0, 0.0, 1)):
+    def __init__(self, vertices, num_vertices, modelConfig, color=None):
         self.vertices = vertices
         self.num_vertices = num_vertices
         self.modelConfig = modelConfig
@@ -23,8 +23,9 @@ class ModelBase(ABC):
         pass
 
     def draw(self, program):
-        loc_color = glGetUniformLocation(program, "color")
-        glUniform4f(loc_color, *self.color)
+        if self.color is not None:
+            loc_color = glGetUniformLocation(program, "color")
+            glUniform4f(loc_color, *self.color)
 
         mat_model = self.get_transform_matrix(**self.modelConfig)
         loc_model = glGetUniformLocation(program, "model")

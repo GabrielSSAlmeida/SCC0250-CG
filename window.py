@@ -22,7 +22,7 @@ class Window:
         self.shader = Shader("shaders/vertex_shader.vs", "shaders/fragment_shader.fs")
         self.shader.use()
         self.program = self.shader.getProgram()
-        self.buffer_VBO = glGenBuffers(1)
+        self.buffer_VBO = glGenBuffers(2)
 
     def show(self):
         glfw.show_window(self.glfw_window)
@@ -50,10 +50,22 @@ class Window:
         vertices['position'] = FileManager.vertices_list
 
         # Upload data
-        glBindBuffer(GL_ARRAY_BUFFER, self.buffer_VBO)
+        glBindBuffer(GL_ARRAY_BUFFER, self.buffer_VBO[0])
         glBufferData(GL_ARRAY_BUFFER, vertices.nbytes, vertices, GL_STATIC_DRAW)
         stride = vertices.strides[0]
         offset = ctypes.c_void_p(0)
         loc_vertices = glGetAttribLocation(self.program, "position")
         glEnableVertexAttribArray(loc_vertices)
         glVertexAttribPointer(loc_vertices, 3, GL_FLOAT, False, stride, offset)
+
+        textures = np.zeros(len(FileManager.textures_coord_list), [("position", np.float32, 2)]) # duas coordenadas
+        textures['position'] = FileManager.textures_coord_list
+        # Upload data
+        glBindBuffer(GL_ARRAY_BUFFER, self.buffer_VBO[1])
+        glBufferData(GL_ARRAY_BUFFER, textures.nbytes, textures, GL_STATIC_DRAW)
+        stride = textures.strides[0]
+        offset = ctypes.c_void_p(0)
+        loc_texture_coord = glGetAttribLocation(self.program, "texture_coord")
+
+        glEnableVertexAttribArray(loc_texture_coord)
+        glVertexAttribPointer(loc_texture_coord, 2, GL_FLOAT, False, stride, offset)
