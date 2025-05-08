@@ -3,7 +3,7 @@ def world_rotation(model):
     config = model.modelConfig
     # Wordl rotate
     if config['type'] == "globo":
-        model.rotate(0.001, 0, 1, 0)
+        model.rotate(0.002, 0, 1, 0)
 
 
 def nimbus_t_and_r(model, dx=0, dy=0, angle_x=None, angle_y=None, angle_z=None):
