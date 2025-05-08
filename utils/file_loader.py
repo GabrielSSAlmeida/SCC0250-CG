@@ -61,51 +61,6 @@ class FileManager:
         for i in range(len(circular_arr) - 2):
             result.extend(circular_arr[i:i+3])
         return result
-    
-    @staticmethod
-    def load_mtl_file(mtl_file_path):
-        material_to_texture = {}
-        current_material = None
-
-        with open(mtl_file_path, 'r') as f:
-            for line in f:
-                if line.startswith('newmtl'):
-                    current_material = line.strip().split()[1]
-                elif line.startswith('map_Kd') and current_material:
-                    texture_file = line.strip().split()[1]
-                    material_to_texture[current_material] = texture_file
-
-        return material_to_texture
-
-    @classmethod
-    def load_obj_and_texture_mtl(cls, objFile, mtlFile=None):
-        modelo = cls.load_model_from_file(objFile)
-        material_to_texture = cls.load_mtl_file(mtlFile) if mtlFile else {}
-
-        verticeInicial = len(cls.vertices_list)
-        print('Processando modelo {}. Vertice inicial: {}'.format(objFile, len(cls.vertices_list)))
-
-        loaded_materials = {}  # Mapeia material para ID de textura (inteiro)
-
-        for face in modelo['faces']:
-            material_name = face[2]
-            texture_path = material_to_texture.get(material_name)
-
-            # Vincula a textura se ainda não tiver sido carregada
-            if material_name and texture_path and material_name not in loaded_materials:
-                texture_id = len(loaded_materials)  # usa um ID sequencial
-                Texture.load(texture_id, texture_path)
-                loaded_materials[material_name] = texture_id
-
-            for vertice_id in cls.circular_sliding_window_of_three(face[0]):
-                cls.vertices_list.append(modelo['vertices'][vertice_id - 1])
-            for texture_id in cls.circular_sliding_window_of_three(face[1]):
-                cls.textures_coord_list.append(modelo['texture'][texture_id - 1])
-
-        verticeFinal = len(cls.vertices_list)
-        print('Processando modelo {}. Vertice final: {}'.format(objFile, len(cls.vertices_list)))
-
-        return verticeInicial, verticeFinal - verticeInicial
 
     @classmethod
     def load_obj_and_texture(cls, objFile, texturesList=[]):

@@ -38,10 +38,12 @@ def main():
     glEnable(GL_LINE_SMOOTH)
 
     # load models
-    verticeInicial_harry, quantosVertices_harry = FileManager.load_obj_and_texture_mtl('objects/hagrid.obj', 'objects/hagrid.mtl')
+    verticeInicial_base_casa1, quantosVertices_base_casa1 = FileManager.load_obj_and_texture('objects/base_casa1.obj', ['textures/Pared_piedra_musgo_2K_Albedo.png'])
+    verticeInicial_teto_casa, quantosVertices_teto_casa = FileManager.load_obj_and_texture('objects/teto_casa.obj', ['textures/Metal_oxidado_Azul_Albedo.png'])
 
     # create model objects
-    harry = Model_3D(verticeInicial_harry, quantosVertices_harry, HARRY)
+    base_casa1 = Model_3D(verticeInicial_base_casa1, quantosVertices_base_casa1, HARRY, 0)
+    teto_casa = Model_3D(verticeInicial_teto_casa, quantosVertices_teto_casa, HARRY, )
 
     # ====== KEY MANAGER ======
     keymanager = KeyManager(window, renderer, view)
@@ -50,7 +52,7 @@ def main():
 
 
     # prepare models to render
-    renderer.add_model([harry])
+    renderer.add_model([base_casa1, teto_casa])
     
     # show windows
     window.upload_data()

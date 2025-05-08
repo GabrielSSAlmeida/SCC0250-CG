@@ -2,11 +2,12 @@ from OpenGL.GL import *
 from abc import ABC, abstractmethod
 
 class ModelBase(ABC):
-    def __init__(self, vertices, num_vertices, modelConfig, color=None):
+    def __init__(self, vertices, num_vertices, modelConfig, textureId, color=None):
         self.vertices = vertices
         self.num_vertices = num_vertices
         self.modelConfig = modelConfig
         self.color = color
+        self.textureId = textureId
         self.type = modelConfig['type']
 
         self.initConfig = {}
@@ -26,6 +27,8 @@ class ModelBase(ABC):
         if self.color is not None:
             loc_color = glGetUniformLocation(program, "color")
             glUniform4f(loc_color, *self.color)
+        
+        glBindTexture(GL_TEXTURE_2D, self.textureId)
 
         mat_model = self.get_transform_matrix(**self.modelConfig)
         loc_model = glGetUniformLocation(program, "model")
