@@ -1,17 +1,9 @@
-dy_state = {"dy": 0.01}
 
-def harry_crazy_chapeu(model):
+def world_rotation(model):
     config = model.modelConfig
-    # Harry just rotate
-    # Chapeu goes up and down 
-    if config['type'] == "harry":
-        model.rotate(5, 0, 1, 0)
-    elif config['type'] == "chapeu":
-        if "upper_lim" in config:
-            if config["t_y"] > config["upper_lim"] or config["t_y"] < config["lower_lim"]:
-                dy_state["dy"] *= -1
-                
-        config["t_y"] = config.get("t_y", 0) + dy_state["dy"]     
+    # Wordl rotate
+    if config['type'] == "globo":
+        model.rotate(0.001, 0, 1, 0)
 
 
 def nimbus_t_and_r(model, dx=0, dy=0, angle_x=None, angle_y=None, angle_z=None):

@@ -42,25 +42,33 @@ def main():
     vi_portas, n_portas, tex_portas = FileManager.load_obj_and_texture('objects/portas.obj', ['textures/Madera_puerta_Albedo.png'])
     vi_escada, n_escada, tex_escada = FileManager.load_obj_and_texture('objects/escada.obj', ['textures/Madera_clara_Albedo.png'])
     vi_chao, n_chao, tex_chao = FileManager.load_obj_and_texture('objects/chao.obj', ['textures/Jardin_raices_Diffuse.png'])
+    vi_pomo, n_pomo, tex_pomo = FileManager.load_obj_and_texture('objects/pomo.obj', ['textures/pomo.jpeg'])
+    vi_globo, n_globo, tex_globo = FileManager.load_obj_and_texture('objects/globo.obj', ['textures/globo.png'])
+
 
     base_casa = Model_3D(vi_base, n_base, DEFAULT_HUT, tex_base)
     teto = Model_3D(vi_teto, n_teto, DEFAULT_HUT, tex_teto)
     portas = Model_3D(vi_portas, n_portas, DEFAULT_HUT, tex_portas)
     escada = Model_3D(vi_escada, n_escada, DEFAULT_HUT, tex_escada)
     chao = Model_3D(vi_chao, n_chao, CHAO, tex_chao)
+    pomo = Model_3D(vi_pomo, n_pomo, POMO, tex_pomo)
+    globo = Model_3D(vi_globo, n_globo, GLOBO, tex_globo)
+   
 
     # ====== KEY MANAGER ======
     keymanager = KeyManager(window, renderer, view)
     mousemanager = MouseManager(window, view, projection)
 
     # prepare models to render
-    renderer.add_model([base_casa, teto, portas, escada, chao])
+    renderer.add_model([base_casa, teto, portas, escada, chao, globo, pomo])
+
     
     # show windows
     window.upload_data()
     window.show()
     window.enable()
     while not window.should_close():
+        world_rotation(globo)
         renderer.render()
 
     window.terminate()
