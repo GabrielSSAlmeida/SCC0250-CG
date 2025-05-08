@@ -2,6 +2,14 @@ from OpenGL.GL import *
 from PIL import Image
 
 class Texture:
+    current_texture_id = 0
+
+    @staticmethod
+    def get_next_texture_id():
+        id = Texture.current_texture_id
+        Texture.current_texture_id += 1
+        return id
+    
     @staticmethod
     def load(texture_id, img_textura):
         print(texture_id)

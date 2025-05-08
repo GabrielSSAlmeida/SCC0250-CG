@@ -65,11 +65,11 @@ class FileManager:
     @classmethod
     def load_obj_and_texture(cls, objFile, texturesList=[]):
         modelo = cls.load_model_from_file(objFile)
-    
-        ### inserindo vertices do modelo no vetor de vertices
+
         verticeInicial = len(cls.vertices_list)
         print('Processando modelo {}. Vertice inicial: {}'.format(objFile, len(cls.vertices_list)))
         faces_visited = []
+
         for face in modelo['faces']:
             if face[2] not in faces_visited:
                 faces_visited.append(face[2])
@@ -80,12 +80,14 @@ class FileManager:
             
         verticeFinal = len(cls.vertices_list)
         print('Processando modelo {}. Vertice final: {}'.format(objFile, len(cls.vertices_list)))
-        
-        ### carregando textura equivalente e definindo um id (buffer): use um id por textura!
-        for id in range(len(texturesList)):
-            Texture.load(id,texturesList[id])
-        
-        return verticeInicial, verticeFinal - verticeInicial
+
+        texture_ids = []
+        for texture_path in texturesList:
+            texture_id = Texture.get_next_texture_id()  # <- Essa função deve retornar um novo ID disponível
+            Texture.load(texture_id, texture_path)
+            texture_ids.append(texture_id)
+
+        return verticeInicial, verticeFinal - verticeInicial, texture_ids[0] if texture_ids else 0
     
     @classmethod
     def load_obj_2D_and_texture(cls, objFile, texturesList=[]):

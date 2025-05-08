@@ -37,22 +37,24 @@ def main():
     #glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA )
     glEnable(GL_LINE_SMOOTH)
 
-    # load models
-    verticeInicial_base_casa1, quantosVertices_base_casa1 = FileManager.load_obj_and_texture('objects/base_casa1.obj', ['textures/Pared_piedra_musgo_2K_Albedo.png'])
-    verticeInicial_teto_casa, quantosVertices_teto_casa = FileManager.load_obj_and_texture('objects/teto_casa.obj', ['textures/Metal_oxidado_Azul_Albedo.png'])
+    vi_base, n_base, tex_base = FileManager.load_obj_and_texture('objects/base_casa.obj', ['textures/Pared_piedra_musgo_2K_Albedo.png'])
+    vi_teto, n_teto, tex_teto = FileManager.load_obj_and_texture('objects/teto.obj', ['textures/Metal_oxidado_Azul_Albedo.png'])
+    vi_portas, n_portas, tex_portas = FileManager.load_obj_and_texture('objects/portas.obj', ['textures/Madera_puerta_Albedo.png'])
+    vi_escada, n_escada, tex_escada = FileManager.load_obj_and_texture('objects/escada.obj', ['textures/Madera_clara_Albedo.png'])
+    vi_chao, n_chao, tex_chao = FileManager.load_obj_and_texture('objects/chao.obj', ['textures/Jardin_raices_Diffuse.png'])
 
-    # create model objects
-    base_casa1 = Model_3D(verticeInicial_base_casa1, quantosVertices_base_casa1, HARRY, 0)
-    teto_casa = Model_3D(verticeInicial_teto_casa, quantosVertices_teto_casa, HARRY, )
+    base_casa = Model_3D(vi_base, n_base, DEFAULT_HUT, tex_base)
+    teto = Model_3D(vi_teto, n_teto, DEFAULT_HUT, tex_teto)
+    portas = Model_3D(vi_portas, n_portas, DEFAULT_HUT, tex_portas)
+    escada = Model_3D(vi_escada, n_escada, DEFAULT_HUT, tex_escada)
+    chao = Model_3D(vi_chao, n_chao, CHAO, tex_chao)
 
     # ====== KEY MANAGER ======
     keymanager = KeyManager(window, renderer, view)
     mousemanager = MouseManager(window, view, projection)
 
-
-
     # prepare models to render
-    renderer.add_model([base_casa1, teto_casa])
+    renderer.add_model([base_casa, teto, portas, escada, chao])
     
     # show windows
     window.upload_data()
