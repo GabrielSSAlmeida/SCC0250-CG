@@ -38,27 +38,29 @@ def main():
     glEnable(GL_LINE_SMOOTH)
 
     # load models
-    verticeInicial_base_casa1, quantosVertices_base_casa1 = FileManager.load_obj_and_texture('objects/base_casa1.obj', ['textures/Pared_piedra_musgo_2K_Albedo.png'])
-    verticeInicial_teto_casa, quantosVertices_teto_casa = FileManager.load_obj_and_texture('objects/teto_casa.obj', ['textures/Metal_oxidado_Azul_Albedo.png'])
+    #verticeInicial_globo, quantosVertices_globo = FileManager.load_obj_and_texture('objects/globo.obj', ['textures/globo.png'])
+    verticeInicial_pomo, quantosVertices_pomo = FileManager.load_obj_and_texture('objects/pomo.obj', ['textures/pomo.jpeg'])
 
     # create model objects
-    base_casa1 = Model_3D(verticeInicial_base_casa1, quantosVertices_base_casa1, HARRY, 0)
-    teto_casa = Model_3D(verticeInicial_teto_casa, quantosVertices_teto_casa, HARRY, )
+    #globo = Model_3D(verticeInicial_globo, quantosVertices_globo, GLOBO, 0)
+    pomo = Model_3D(verticeInicial_pomo, quantosVertices_pomo, POMO, 0)
 
     # ====== KEY MANAGER ======
     keymanager = KeyManager(window, renderer, view)
     mousemanager = MouseManager(window, view, projection)
 
-
+    
 
     # prepare models to render
-    renderer.add_model([base_casa1, teto_casa])
+    #renderer.add_model([globo])
+    renderer.add_model([pomo])
     
     # show windows
     window.upload_data()
     window.show()
     window.enable()
     while not window.should_close():
+        #world_rotation(globo)
         renderer.render()
 
     window.terminate()
