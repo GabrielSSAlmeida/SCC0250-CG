@@ -26,7 +26,7 @@ import glm
 
 def main():
     fov = 45.0
-    deltaTime = 0.001
+    deltaTime = 0.005
     window = Window()
     view = View(glm.vec3(0.0, 10.0, 5.0), glm.vec3(0.0, 0.0, 0.0), glm.vec3(0.0, 1.0, 0.0), deltaTime)
     projection = Projection(window.altura, window.largura, fov)
