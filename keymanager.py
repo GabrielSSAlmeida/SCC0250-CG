@@ -72,3 +72,4 @@ class KeyManager:
                     model = [model]
                 for m in model:
                     func(m)
+                    #print(f"{m.type}: X: {m.modelConfig["t_x"]}, Y:{m.modelConfig["t_y"]}, Z:{m.modelConfig["t_z"]}")

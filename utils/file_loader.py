@@ -67,7 +67,7 @@ class FileManager:
         modelo = cls.load_model_from_file(objFile)
 
         verticeInicial = len(cls.vertices_list)
-        print('Processando modelo {}. Vertice inicial: {}'.format(objFile, len(cls.vertices_list)))
+        #print('Processando modelo {}. Vertice inicial: {}'.format(objFile, len(cls.vertices_list)))
         faces_visited = []
 
         for face in modelo['faces']:
@@ -79,7 +79,7 @@ class FileManager:
                 cls.textures_coord_list.append(modelo['texture'][texture_id - 1])
             
         verticeFinal = len(cls.vertices_list)
-        print('Processando modelo {}. Vertice final: {}'.format(objFile, len(cls.vertices_list)))
+        #print('Processando modelo {}. Vertice final: {}'.format(objFile, len(cls.vertices_list)))
 
         texture_ids = []
         for texture_path in texturesList:
@@ -94,7 +94,7 @@ class FileManager:
         modelo = cls.load_model_from_file(objFile)
 
         verticeInicial = len(cls.vertices_list)
-        print(f'Processando modelo 2D {objFile}. Vértice inicial: {verticeInicial}')
+        #print(f'Processando modelo 2D {objFile}. Vértice inicial: {verticeInicial}')
         faces_visited = []
 
         for face in modelo['faces']:
@@ -111,7 +111,7 @@ class FileManager:
                 cls.textures_coord_list.append(modelo['texture'][texture_id - 1])
 
         verticeFinal = len(cls.vertices_list)
-        print(f'Processando modelo 2D {objFile}. Vértice final: {verticeFinal}')
+        #print(f'Processando modelo 2D {objFile}. Vértice final: {verticeFinal}')
 
         for id in range(len(texturesList)):
             Texture.load(id, texturesList[id])
