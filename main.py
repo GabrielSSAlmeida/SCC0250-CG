@@ -47,7 +47,12 @@ def main():
     vi_vassoura, n_vassoura, tex_vassoura = FileManager.load_obj_and_texture('objects/vassoura.obj', ['textures/vassoura.jpeg'])
     vi_tree, n_tree, tex_tree = FileManager.load_obj_and_texture('objects/tree.obj', ['textures/tree.png'])
     vi_abobora, n_abobora, tex_abobora = FileManager.load_obj_and_texture('objects/abobora.obj', ['textures/abobora.png'])
-
+    vi_mesa, n_mesa, tex_mesa = FileManager.load_obj_and_texture('objects/mesa.obj', ['textures/Madera_puerta_Albedo.png'])
+    vi_sapo, n_sapo, tex_sapo = FileManager.load_obj_and_texture('objects/sapo.obj', ['textures/sapo.png'])
+    vi_cartas, n_cartas, tex_cartas = FileManager.load_obj_and_texture('objects/cartas.obj', ['textures/cartas.png'])
+    vi_caixa, n_caixa, tex_caixa = FileManager.load_obj_and_texture('objects/caixa.obj', ['textures/caixa.png'])
+    vi_cadeira, n_cadeira, tex_cadeira = FileManager.load_obj_and_texture('objects/cadeira.obj', ['textures/Madera_puerta_Albedo.png'])
+    
 
     base_casa = Model_3D(vi_base, n_base, DEFAULT_HUT, tex_base)
     teto = Model_3D(vi_teto, n_teto, DEFAULT_HUT, tex_teto)
@@ -57,10 +62,16 @@ def main():
     pomo = Model_3D(vi_pomo, n_pomo, POMO, tex_pomo)
     globo = Model_3D(vi_globo, n_globo, GLOBO, tex_globo)
     vassoura = Model_3D(vi_vassoura, n_vassoura, DEFAULT_HUT, tex_vassoura)
+    mesa = Model_3D(vi_mesa, n_mesa, MESA, tex_mesa)
+    sapo = Model_3D(vi_sapo, n_sapo, SAPO, tex_sapo)
+    caixa = Model_3D(vi_caixa, n_caixa, CAIXA, tex_caixa)
+    cartas = Model_3D(vi_cartas, n_cartas, CARTAS, tex_cartas)
+    cadeira = Model_3D(vi_cadeira, n_cadeira, CADEIRA, tex_cadeira)
     
     
     tree_positions = [(-20, -20), (10, -20), (-20, 20), (20, 20)]
     trees = create_n_models(vi_tree, n_tree, tex_tree, tree_positions, TREE)
+    
    
 
     abobora_positions = [(-10, -10), (-5, -5), (-2, -5), (-5, -2)]
@@ -82,7 +93,12 @@ def main():
         chao, 
         globo, 
         pomo, 
-        vassoura
+        vassoura, 
+        mesa, 
+        sapo, 
+        cartas, 
+        caixa,
+        cadeira,
     ] + trees + aboboras)
 
     """ keymanager.set_key(glfw.KEY_UP, lambda m: m.translate(0, 0.1, 0), tree)
