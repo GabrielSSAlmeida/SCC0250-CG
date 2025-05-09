@@ -32,24 +32,24 @@ def make_scaler(direction, scale_factor, delta_y, min_scale=1.0, max_scale=2.5):
     
 
 
-def nimbus_t_and_r(model, dx=0, dy=0, angle_x=None, angle_y=None, angle_z=None):
+def nimbus_translation(model, dx=0, dy=0, dz=0, angle_x=None, angle_y=None, angle_z=None):
     config = model.modelConfig
 
     config.setdefault('t_x', 0.0)
     config.setdefault('t_y', 0.0)
     config.setdefault('t_z', 0.0)
-    config.setdefault('angle_x', 0.0)
-    config.setdefault('angle_y', 0.0)
-    config.setdefault('angle_z', 0.0)
 
+    config['angle_x'] = 0.0
+    config['angle_y'] = 0.0
+    config['angle_z'] = 0.0
 
     config['t_x'] += dx
     config['t_y'] += dy
+    config['t_z'] += dz
 
-    # preserves rotation
-    if config["t_y"] > config["upper_lim"]:
+    if config["t_y"] > config.get("upper_lim", float('inf')):
         config["t_y"] = config["upper_lim"]
-
+        
     if angle_x is not None:
         config['angle_x'] = angle_x
     if angle_y is not None:

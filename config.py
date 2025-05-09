@@ -1,7 +1,8 @@
 DEFAULT_HUT = {"type": "hut", "t_x": 0.0, "t_y": 2.9, "t_z": 0.0, "angle_x": 0.0, "angle_y": 0.0,"angle_z": 0.0, "s_x": 2.0, "s_y": 2.0, "s_z": 2.0}
+NIMBUS = {"type": "hut", "t_x": 0.0, "t_y": 2.9, "t_z": 0.0, "angle_x": 0.0, "angle_y": 0.0,"angle_z": 0.0, "s_x": 2.0, "s_y": 2.0, "s_z": 2.0}
 CHAO = {"type": "chao", "t_x": 0.0, "t_y": 0.0, "t_z": 0.0, "angle_x": 0.0, "angle_y": 0.0,"angle_z": 0.0, "s_x": 5.0, "s_y": 1.0, "s_z": 5.0}
 GLOBO = {"type": "globo", "t_x": 0.0, "t_y": -10.0, "angle_x": 0.0, "angle_y": 1.0, "angle_z": 0.0, "s_x": 50.0, "s_y": 50.0, "s_z": 50.0}
-POMO = {"type": "pomo", "t_x": -0.6, "t_y": 0.6, "t_z": 0.001, "angle_x": 20, "angle_y": 0.0,"angle_z": 0.0, "s_x": 0.04, "s_y": 0.04, "s_z": 0.04, "upper_lim": 0.9, "lower_lim": -0.1}
+POMO = {"type": "pomo", "t_x": -0.6, "t_y": 0.6, "t_z": 0.001, "angle_x": 180.0, "angle_y": 0.0,"angle_z": 0.0, "s_x": 0.06, "s_y": 0.06, "s_z": 0.06}
 TREE = {"type": "tree", "t_x": 0.0, "t_y": -3.4, "t_z": 0.0, "angle_x": 0.0, "angle_y": 0.0,"angle_z": 0.0, "s_x": 30.0, "s_y": 30.0, "s_z": 30.0}
 ABOBORA = {"type": "abobora", "t_x": 0.0, "t_y": -2.4, "t_z": 0.0, "angle_x": 0.0, "angle_y": 0.0,"angle_z": 0.0, "s_x": 1.0, "s_y": 1.0, "s_z": 1.0}
 MESA = {"type": "mesa", "t_x": 3.5, "t_y": -3.0, "t_z": 12.0, "angle_x": 0.0, "angle_y": 40.0, "angle_z": 0.0, "s_x": 0.1, "s_y": 0.1, "s_z": 0.1}

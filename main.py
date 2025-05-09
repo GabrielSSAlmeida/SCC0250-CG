@@ -44,7 +44,7 @@ def main():
     vi_chao, n_chao, tex_chao = FileManager.load_obj_and_texture('objects/chao.obj', ['textures/Jardin_raices_Diffuse.png'])
     vi_pomo, n_pomo, tex_pomo = FileManager.load_obj_and_texture('objects/pomo.obj', ['textures/pomo.jpeg'])
     vi_globo, n_globo, tex_globo = FileManager.load_obj_and_texture('objects/globo.obj', ['textures/globo.png'])
-    vi_vassoura, n_vassoura, tex_vassoura = FileManager.load_obj_and_texture('objects/vassoura.obj', ['textures/vassoura.jpeg'])
+    vi_nimbus, n_nimbus, tex_nimbus = FileManager.load_obj_and_texture('objects/nimbus.obj', ['textures/nimbus.jpeg'])
     vi_tree, n_tree, tex_tree = FileManager.load_obj_and_texture('objects/tree.obj', ['textures/tree.png'])
     vi_abobora, n_abobora, tex_abobora = FileManager.load_obj_and_texture('objects/abobora.obj', ['textures/abobora.png'])
     vi_mesa, n_mesa, tex_mesa = FileManager.load_obj_and_texture('objects/mesa.obj', ['textures/Madera_puerta_Albedo.png'])
@@ -61,7 +61,7 @@ def main():
     chao = Model_3D(vi_chao, n_chao, CHAO, tex_chao)
     pomo = Model_3D(vi_pomo, n_pomo, POMO, tex_pomo)
     globo = Model_3D(vi_globo, n_globo, GLOBO, tex_globo)
-    vassoura = Model_3D(vi_vassoura, n_vassoura, DEFAULT_HUT, tex_vassoura)
+    nimbus = Model_3D(vi_nimbus, n_nimbus, NIMBUS, tex_nimbus)
     mesa = Model_3D(vi_mesa, n_mesa, MESA, tex_mesa)
     sapo = Model_3D(vi_sapo, n_sapo, SAPO, tex_sapo)
     caixa = Model_3D(vi_caixa, n_caixa, CAIXA, tex_caixa)
@@ -93,7 +93,7 @@ def main():
         chao, 
         globo, 
         pomo, 
-        vassoura, 
+        nimbus, 
         mesa, 
         sapo, 
         cartas, 
@@ -104,10 +104,23 @@ def main():
     """ keymanager.set_key(glfw.KEY_UP, lambda m: m.translate(0, 0.1, 0), tree)
     keymanager.set_key(glfw.KEY_DOWN, lambda m: m.translate(0, -0.1, 0), tree) """
 
+    # ABÓBORA
     keymanager.set_key(glfw.KEY_UP, make_scaler("up", 1.1, 0.15), aboboras[0])
     keymanager.set_key(glfw.KEY_DOWN, make_scaler("down", 1.1, 0.15), aboboras[0])
 
-    
+    # POMO DE OURO
+    keymanager.set_key(glfw.KEY_O, lambda m: m.rotate(5, 1, 0, 0), pomo)
+    keymanager.set_key(glfw.KEY_I, lambda m: m.rotate(5, 0, 1, 0), pomo)
+    keymanager.set_key(glfw.KEY_U, lambda m: m.rotate(5, 0, 0, 1), pomo)
+
+    # NIMBUS
+    keymanager.set_key(glfw.KEY_KP_4, lambda m: nimbus_translation(m, dx=-0.05, angle_y=180), nimbus)   
+    keymanager.set_key(glfw.KEY_KP_6, lambda m: nimbus_translation(m, dx=0.05, angle_x=90), nimbus)   
+    keymanager.set_key(glfw.KEY_KP_2, lambda m: nimbus_translation(m, dy=-0.05, angle_z=270), nimbus)  
+    keymanager.set_key(glfw.KEY_KP_5, lambda m: nimbus_translation(m, dy=0.05, angle_z=90), nimbus)   
+    keymanager.set_key(glfw.KEY_KP_1, lambda m: nimbus_translation(m, dz=-0.05, angle_y=90), nimbus)    
+    keymanager.set_key(glfw.KEY_KP_3, lambda m: nimbus_translation(m, dz=0.05, angle_y=270), nimbus)   
+
     # show windows
     window.upload_data()
     window.show()
