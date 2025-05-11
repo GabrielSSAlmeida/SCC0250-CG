@@ -13,7 +13,6 @@ from window import Window
 from view import View
 from projection import Projection
 from models.model_3D import Model_3D
-from models.model_2D import Model_2D
 from models.renderer import Renderer
 from utils.file_loader import FileManager
 from keymanager import KeyManager
@@ -31,11 +30,7 @@ def main():
     view = View(glm.vec3(0.0, 10.0, 5.0), glm.vec3(0.0, 0.0, 0.0), glm.vec3(0.0, 1.0, 0.0), deltaTime)
     projection = Projection(window.altura, window.largura, fov)
     renderer = Renderer(window, view, projection.mat_projection)
-    glEnable(GL_TEXTURE_2D)
-    glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE)
-    #glEnable( GL_BLEND )
-    #glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA )
-    glEnable(GL_LINE_SMOOTH)
+
 
     vi_base, n_base, tex_base = FileManager.load_obj_and_texture('objects/base_casa.obj', ['textures/Pared_piedra_musgo_2K_Albedo.png'])
     vi_teto, n_teto, tex_teto = FileManager.load_obj_and_texture('objects/teto.obj', ['textures/Metal_oxidado_Azul_Albedo.png'])
@@ -101,8 +96,6 @@ def main():
         cadeira,
     ] + trees + aboboras)
 
-    """ keymanager.set_key(glfw.KEY_UP, lambda m: m.translate(0, 0.1, 0), tree)
-    keymanager.set_key(glfw.KEY_DOWN, lambda m: m.translate(0, -0.1, 0), tree) """
 
     # ABÓBORA
     keymanager.set_key(glfw.KEY_UP, make_scaler("up", 1.1, 0.15), aboboras[0])
@@ -114,12 +107,12 @@ def main():
     keymanager.set_key(glfw.KEY_U, lambda m: m.rotate(5, 0, 0, 1), pomo)
 
     # NIMBUS
-    keymanager.set_key(glfw.KEY_KP_4, lambda m: nimbus_translation(m, dx=-0.05, angle_y=180), nimbus)   
-    keymanager.set_key(glfw.KEY_KP_6, lambda m: nimbus_translation(m, dx=0.05, angle_x=90), nimbus)   
-    keymanager.set_key(glfw.KEY_KP_2, lambda m: nimbus_translation(m, dy=-0.05, angle_z=270), nimbus)  
-    keymanager.set_key(glfw.KEY_KP_5, lambda m: nimbus_translation(m, dy=0.05, angle_z=90), nimbus)   
-    keymanager.set_key(glfw.KEY_KP_1, lambda m: nimbus_translation(m, dz=-0.05, angle_y=90), nimbus)    
-    keymanager.set_key(glfw.KEY_KP_3, lambda m: nimbus_translation(m, dz=0.05, angle_y=270), nimbus)   
+    keymanager.set_key(glfw.KEY_KP_4, lambda m: nimbus_translation(m, dx=-0.3, angle_y=180), nimbus)   
+    keymanager.set_key(glfw.KEY_KP_6, lambda m: nimbus_translation(m, dx=0.3, angle_x=90), nimbus)   
+    keymanager.set_key(glfw.KEY_KP_2, lambda m: nimbus_translation(m, dy=-0.3, angle_z=270), nimbus)  
+    keymanager.set_key(glfw.KEY_KP_5, lambda m: nimbus_translation(m, dy=0.3, angle_z=90), nimbus)   
+    keymanager.set_key(glfw.KEY_KP_1, lambda m: nimbus_translation(m, dz=-0.3, angle_y=90), nimbus)    
+    keymanager.set_key(glfw.KEY_KP_3, lambda m: nimbus_translation(m, dz=0.3, angle_y=270), nimbus)   
 
     # show windows
     window.upload_data()

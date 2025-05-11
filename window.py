@@ -24,6 +24,12 @@ class Window:
         self.program = self.shader.getProgram()
         self.buffer_VBO = glGenBuffers(2)
 
+        glEnable(GL_TEXTURE_2D)
+        glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE)
+        #glEnable( GL_BLEND )
+        #glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA )
+        glEnable(GL_LINE_SMOOTH)
+
     def show(self):
         glfw.show_window(self.glfw_window)
 

@@ -31,7 +31,7 @@ def make_scaler(direction, scale_factor, delta_y, min_scale=1.0, max_scale=2.5):
 
 
 
-def limit_camera_position(cam_pos, sphere_center=(0, -10, 0), max_radius=48.0, min_y=-1.5):
+def limit_camera_position(cam_pos, sphere_center=(0, -10, 0), max_radius=48.0, min_y=-1.5, padding=0.0):
     x, y, z = cam_pos
     cx, cy, cz = sphere_center
 
@@ -44,7 +44,7 @@ def limit_camera_position(cam_pos, sphere_center=(0, -10, 0), max_radius=48.0, m
     dz = z - cz
 
     # Compute the distance from the camera to the center of the sphere (skybox)
-    distance = sqrt(dx**2 + dy**2 + dz**2)
+    distance = sqrt(dx**2 + dy**2 + dz**2) + padding
 
     # If the distance exceeds the allowed radius, push the camera back to the sphere's surface
     if distance > max_radius:
@@ -71,8 +71,7 @@ def nimbus_translation(model, dx=0, dy=0, dz=0, angle_x=None, angle_y=None, angl
     config['t_y'] += dy
     config['t_z'] += dz
 
-    if config["t_y"] > config.get("upper_lim", float('inf')):
-        config["t_y"] = config["upper_lim"]
+    config['t_x'], config['t_y'], config['t_z'] = limit_camera_position((config['t_x'], config['t_y'], config['t_z']), min_y=2.5, padding=4.0)
         
     if angle_x is not None:
         config['angle_x'] = angle_x
