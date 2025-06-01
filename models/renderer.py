@@ -28,18 +28,19 @@ class Renderer:
     def render(self):
         self.window.poll_events()
         
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glClearColor(1.0, 1.0, 1.0, 1) # white background
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glPolygonMode(GL_FRONT_AND_BACK, self.polygonMode)
 
-        for model in self.models:
-            model.draw(self.window.program)
-        
         self.view.update_view_matrix()
         loc_view = glGetUniformLocation(self.window.program, "view")
         glUniformMatrix4fv(loc_view, 1, GL_TRUE, self.view.mat_view)
 
         loc_projection = glGetUniformLocation(self.window.program, "projection")
-        glUniformMatrix4fv(loc_projection, 1, GL_TRUE, self.mat_projection)    
+        glUniformMatrix4fv(loc_projection, 1, GL_TRUE, self.mat_projection)  
+
+        for model in self.models:
+            self.window.shader.use()
+            model.draw(self.window.program, self.view.cameraPos)
 
         self.window.swap_buffers()

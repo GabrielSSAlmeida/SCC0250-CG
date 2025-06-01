@@ -19,10 +19,11 @@ class Window:
             glfw.terminate()
 
         glfw.make_context_current(self.glfw_window)
-        self.shader = Shader("shaders/vertex_shader.vs", "shaders/fragment_shader.fs")
+        self.shader = Shader("shaders/multiple_lights.vs", "shaders/multiple_lights.fs")
         self.shader.use()
         self.program = self.shader.getProgram()
-        self.buffer_VBO = glGenBuffers(2)
+        self.buffer_VBO = glGenBuffers(3)
+        self.VAO = glGenVertexArrays(1)
 
         glEnable(GL_TEXTURE_2D)
         glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE)
@@ -52,10 +53,12 @@ class Window:
         glfw.swap_buffers(self.glfw_window)
 
     def upload_data(self):
+        glBindVertexArray(self.VAO) # inicia VAO
+
+        # --- Posições ---
         vertices = np.zeros(len(FileManager.vertices_list), [("position", np.float32, 3)])
         vertices['position'] = FileManager.vertices_list
 
-        # Upload data
         glBindBuffer(GL_ARRAY_BUFFER, self.buffer_VBO[0])
         glBufferData(GL_ARRAY_BUFFER, vertices.nbytes, vertices, GL_STATIC_DRAW)
         stride = vertices.strides[0]
@@ -64,14 +67,28 @@ class Window:
         glEnableVertexAttribArray(loc_vertices)
         glVertexAttribPointer(loc_vertices, 3, GL_FLOAT, False, stride, offset)
 
-        textures = np.zeros(len(FileManager.textures_coord_list), [("position", np.float32, 2)]) # duas coordenadas
-        textures['position'] = FileManager.textures_coord_list
-        # Upload data
+
+        # --- Normais ---
+        normals = np.zeros(len(FileManager.normals_list), [("position", np.float32, 3)])
+        normals['position'] = FileManager.normals_list
+
         glBindBuffer(GL_ARRAY_BUFFER, self.buffer_VBO[1])
+        glBufferData(GL_ARRAY_BUFFER, normals.nbytes, normals, GL_STATIC_DRAW)
+        stride = normals.strides[0]
+        offset = ctypes.c_void_p(0)
+        loc_normais = glGetAttribLocation(self.program, "normal")
+        glEnableVertexAttribArray(loc_normais)
+        glVertexAttribPointer(loc_normais, 3, GL_FLOAT, False, stride, offset)
+
+        # --- Coordenadas de textura ---
+        textures = np.zeros(len(FileManager.textures_coord_list), [("position", np.float32, 2)])
+        textures['position'] = FileManager.textures_coord_list
+
+        glBindBuffer(GL_ARRAY_BUFFER, self.buffer_VBO[2])
         glBufferData(GL_ARRAY_BUFFER, textures.nbytes, textures, GL_STATIC_DRAW)
         stride = textures.strides[0]
         offset = ctypes.c_void_p(0)
-        loc_texture_coord = glGetAttribLocation(self.program, "texture_coord")
+        loc_textures = glGetAttribLocation(self.program, "texture_coord")
+        glEnableVertexAttribArray(loc_textures)
+        glVertexAttribPointer(loc_textures, 2, GL_FLOAT, False, stride, offset)
 
-        glEnableVertexAttribArray(loc_texture_coord)
-        glVertexAttribPointer(loc_texture_coord, 2, GL_FLOAT, False, stride, offset)

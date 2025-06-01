@@ -23,11 +23,14 @@ class ModelBase(ABC):
     def primitive_type(self):
         pass
 
-    def draw(self, program):
+    def draw(self, program, view_pos):
         if self.color is not None:
             loc_color = glGetUniformLocation(program, "color")
             glUniform4f(loc_color, *self.color)
         
+        loc_view_pos = glGetUniformLocation(program, "viewPos")
+        glUniform3f(loc_view_pos, *view_pos)
+
         glBindTexture(GL_TEXTURE_2D, self.textureId)
 
         mat_model = self.get_transform_matrix(**self.modelConfig)

@@ -17,6 +17,7 @@ from models.renderer import Renderer
 from utils.file_loader import FileManager
 from keymanager import KeyManager
 from mousemanager import MouseManager
+from shaders.shader_s import Shader
 from utils.custom_keys_callbacks import *
 from OpenGL.GL import *
 from config import *
@@ -26,7 +27,9 @@ import glm
 def main():
     fov = 45.0
     deltaTime = 0.005
+
     window = Window()
+
     view = View(glm.vec3(0.0, 10.0, 5.0), glm.vec3(0.0, 0.0, 0.0), glm.vec3(0.0, 1.0, 0.0), deltaTime)
     projection = Projection(window.altura, window.largura, fov)
     renderer = Renderer(window, view, projection.mat_projection)
@@ -118,6 +121,31 @@ def main():
     window.upload_data()
     window.show()
     window.enable()
+
+    pointLightPositions = [
+        glm.vec3( 10.0,  10.0,  10.0),
+    ]
+
+    window.shader.use()
+    window.shader.setInt("material.diffuse", 0)
+    window.shader.setInt("material.specular", 1)
+
+    window.shader.setVec3("dirLight.direction", -0.2, -1.0, -0.3)  # Exemplo: luz vindo de cima na diagonal
+
+    window.shader.setVec3("dirLight.ambient", 0.2, 0.2, 0.2)   # Luz ambiente moderada
+    window.shader.setVec3("dirLight.diffuse", 0.5, 0.5, 0.5)   # Luz difusa
+    #window.shader.setVec3("dirLight.specular", 1.0, 1.0, 1.0)  # Reflexos brilhantes
+
+
+    window.shader.setVec3("pointLights[0].position", pointLightPositions[0])
+    window.shader.setVec3("pointLights[0].ambient", 0.1, 0.1, 0.05)
+    window.shader.setVec3("pointLights[0].diffuse", 0.9, 0.9, 0.5)
+    window.shader.setVec3("pointLights[0].specular", 1.0, 1.0, 0.6)
+    window.shader.setFloat("pointLights[0].constant", 1.0)
+    window.shader.setFloat("pointLights[0].linear", 0.09)
+    window.shader.setFloat("pointLights[0].quadratic", 0.032)
+
+
     while not window.should_close():
         world_rotation(globo)
         renderer.render()
