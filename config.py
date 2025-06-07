@@ -10,3 +10,4 @@ SAPO = {"type": "sapo", "t_x": 3.3, "t_y": -1.6, "t_z": 12.0, "angle_x": 0.0, "a
 CAIXA = {"type": "caixa", "t_x": 4.2, "t_y": -1.6, "t_z": 12.0, "angle_x": 0.0, "angle_y": 220.0, "angle_z": 0.0, "s_x": 0.3, "s_y": 0.3, "s_z": 0.3}
 CARTAS = {"type": "cartas", "t_x": 3.9, "t_y": -1.6, "t_z": 11.3, "angle_x": 4.0, "angle_y": 220.0, "angle_z": 4.0, "s_x": 0.3, "s_y": 0.3, "s_z": 0.3}
 CADEIRA = {"type": "cadeira", "t_x": 4.9, "t_y": -3.0, "t_z": 9.3, "angle_x": 0.0, "angle_y": 240.0, "angle_z": 0.0, "s_x": 1.5, "s_y": 1.5, "s_z":  1.5}
+POSTE = {"type": "poste", "t_x": -4.0, "t_y": -2.4, "t_z": -9.0, "angle_x": 0.0, "angle_y": 0.0,"angle_z": 0.0, "s_x": 0.2, "s_y": 0.2, "s_z": 0.2}

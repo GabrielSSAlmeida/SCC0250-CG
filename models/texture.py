@@ -21,6 +21,7 @@ class Texture:
         img = Image.open(img_textura)
         img_width = img.size[0]
         img_height = img.size[1]
+        img = img.convert("RGB")
         image_data = img.tobytes("raw", "RGB", 0, -1)
         #image_data = np.array(list(img.getdata()), np.uint8)
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img_width, img_height, 0, GL_RGB, GL_UNSIGNED_BYTE, image_data)

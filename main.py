@@ -50,7 +50,7 @@ def main():
     vi_cartas, n_cartas, tex_cartas = FileManager.load_obj_and_texture('objects/cartas.obj', ['textures/cartas.png'])
     vi_caixa, n_caixa, tex_caixa = FileManager.load_obj_and_texture('objects/caixa.obj', ['textures/caixa.png'])
     vi_cadeira, n_cadeira, tex_cadeira = FileManager.load_obj_and_texture('objects/cadeira.obj', ['textures/Madera_puerta_Albedo.png'])
-    
+    vi_poste, n_poste, tex_poste = FileManager.load_obj_and_texture('objects/lamp_street_.obj', ['textures/lamp_street.png'])
 
     base_casa = Model_3D(vi_base, n_base, DEFAULT_HUT, tex_base)
     teto = Model_3D(vi_teto, n_teto, DEFAULT_HUT, tex_teto)
@@ -65,11 +65,12 @@ def main():
     caixa = Model_3D(vi_caixa, n_caixa, CAIXA, tex_caixa)
     cartas = Model_3D(vi_cartas, n_cartas, CARTAS, tex_cartas)
     cadeira = Model_3D(vi_cadeira, n_cadeira, CADEIRA, tex_cadeira)
+    poste = Model_3D(vi_poste, n_poste, POSTE, tex_poste)
     
     
     tree_positions = [(-20, -20), (10, -20), (-20, 20), (20, 20)]
     trees = create_n_models(vi_tree, n_tree, tex_tree, tree_positions, TREE)
-    
+
    
 
     abobora_positions = [(-10, -10), (-5, -5), (-2, -5), (-5, -2)]
@@ -97,6 +98,7 @@ def main():
         cartas, 
         caixa,
         cadeira,
+        poste,
     ] + trees + aboboras)
 
 
