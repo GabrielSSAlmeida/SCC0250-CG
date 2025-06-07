@@ -2,45 +2,64 @@ from OpenGL.GL import *
 from window import Window
 from models.model import ModelBase
 from typing import List
+import glm
 
 
+# Em Renderer.py
 class Renderer:
     def __init__(self, window, view, mat_projection):
+        # ... seu código existente ...
         self.window: Window = window
         self.models: List[ModelBase] = []
         self.view = view
         self.mat_projection: List = mat_projection
         self.polygonMode = GL_FILL
 
-    # add models to the list that renders
+        self._uniform_locations = {}
+        self._cache_shader_uniform_locations()
+    
     def add_model(self, model):
         if not isinstance(model, list):
             model = [model]
         for m in model:
             self.models.append(m)
-        
+
     def setPolygonMode(self):
         if self.polygonMode == GL_FILL:
             self.polygonMode = GL_LINE
         else:
             self.polygonMode = GL_FILL
 
-    def render(self):
-        self.window.poll_events()
+    def _cache_shader_uniform_locations(self):
+        program = self.window.program
+        self._uniform_locations["view"] = glGetUniformLocation(program, "view")
+        self._uniform_locations["projection"] = glGetUniformLocation(program, "projection")
+        self._uniform_locations["viewPos"] = glGetUniformLocation(program, "viewPos")
+
         
-        glClearColor(1.0, 1.0, 1.0, 1) # white background
+        self._uniform_locations["global_ka"] = glGetUniformLocation(program, "global_ka")
+        self._uniform_locations["global_kd"] = glGetUniformLocation(program, "global_kd")
+        self._uniform_locations["global_ks"] = glGetUniformLocation(program, "global_ks")
+
+    def render(self, ka_val, kd_val, ks_val):
+        self.window.poll_events()
+        glClearColor(1.0, 1.0, 1.0, 1)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glPolygonMode(GL_FRONT_AND_BACK, self.polygonMode)
 
         self.view.update_view_matrix()
-        loc_view = glGetUniformLocation(self.window.program, "view")
-        glUniformMatrix4fv(loc_view, 1, GL_TRUE, self.view.mat_view)
+        glUniformMatrix4fv(self._uniform_locations["view"], 1, GL_TRUE, self.view.mat_view)
+        glUniformMatrix4fv(self._uniform_locations["projection"], 1, GL_TRUE, self.mat_projection)
+        glUniform3f(self._uniform_locations["viewPos"], *self.view.cameraPos)
 
-        loc_projection = glGetUniformLocation(self.window.program, "projection")
-        glUniformMatrix4fv(loc_projection, 1, GL_TRUE, self.mat_projection)  
 
+        glUniform1f(self._uniform_locations["global_ka"], ka_val)
+        glUniform1f(self._uniform_locations["global_kd"], kd_val)
+        glUniform1f(self._uniform_locations["global_ks"], ks_val)
+
+        # Renderizar todos os modelos
         for model in self.models:
-            self.window.shader.use()
+            # model.draw já envia a matriz do modelo e a posição da câmera
             model.draw(self.window.program, self.view.cameraPos)
 
         self.window.swap_buffers()
