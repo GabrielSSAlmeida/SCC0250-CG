@@ -17,7 +17,7 @@ from models.renderer import Renderer
 from utils.file_loader import FileManager
 from keymanager import KeyManager
 from mousemanager import MouseManager
-from shaders.shader_s import Shader
+from models.ilumination import Ilumination
 from utils.custom_keys_callbacks import *
 from OpenGL.GL import *
 from config import *
@@ -25,6 +25,7 @@ import glfw
 import glm
 
 def main():
+    DEBUG = False
     fov = 45.0
     deltaTime = 0.005
 
@@ -50,6 +51,7 @@ def main():
     vi_cartas, n_cartas, tex_cartas = FileManager.load_obj_and_texture('objects/cartas.obj', ['textures/cartas.png'])
     vi_caixa, n_caixa, tex_caixa = FileManager.load_obj_and_texture('objects/caixa.obj', ['textures/caixa.png'])
     vi_cadeira, n_cadeira, tex_cadeira = FileManager.load_obj_and_texture('objects/cadeira.obj', ['textures/Madera_puerta_Albedo.png'])
+    vi_cubo, n_cubo, tex_cubo = FileManager.load_obj_and_texture('objects/cubo_teste.obj', ['textures/caixa.png'])
     
 
     base_casa = Model_3D(vi_base, n_base, DEFAULT_HUT, tex_base)
@@ -65,8 +67,12 @@ def main():
     caixa = Model_3D(vi_caixa, n_caixa, CAIXA, tex_caixa)
     cartas = Model_3D(vi_cartas, n_cartas, CARTAS, tex_cartas)
     cadeira = Model_3D(vi_cadeira, n_cadeira, CADEIRA, tex_cadeira)
-    
-    
+
+    cuboEx = Model_3D(vi_cubo, n_cubo, CUBO, tex_cubo)
+    cuboIn = Model_3D(vi_cubo, n_cubo, CUBO, tex_cubo)
+    cuboEx.translate(20.0, 10.0, 20.0)
+    cuboIn.translate(2.77, 0.04, 11.269)
+
     tree_positions = [(-20, -20), (10, -20), (-20, 20), (20, 20)]
     trees = create_n_models(vi_tree, n_tree, tex_tree, tree_positions, TREE)
     
@@ -77,7 +83,7 @@ def main():
 
 
     # ====== KEY MANAGER ======
-    keymanager = KeyManager(window, renderer, view)
+    keymanager = KeyManager(window, renderer, view, debug=DEBUG)
     mousemanager = MouseManager(window, view, projection)
 
 
@@ -97,6 +103,8 @@ def main():
         cartas, 
         caixa,
         cadeira,
+        cuboIn,
+        cuboEx,
     ] + trees + aboboras)
 
 
@@ -115,40 +123,73 @@ def main():
     keymanager.set_key(glfw.KEY_KP_2, lambda m: nimbus_translation(m, dy=-0.3, angle_z=270), nimbus)  
     keymanager.set_key(glfw.KEY_KP_5, lambda m: nimbus_translation(m, dy=0.3, angle_z=90), nimbus)   
     keymanager.set_key(glfw.KEY_KP_1, lambda m: nimbus_translation(m, dz=-0.3, angle_y=90), nimbus)    
-    keymanager.set_key(glfw.KEY_KP_3, lambda m: nimbus_translation(m, dz=0.3, angle_y=270), nimbus)   
+    keymanager.set_key(glfw.KEY_KP_3, lambda m: nimbus_translation(m, dz=0.3, angle_y=270), nimbus)  
 
+
+    # --- CONFIGURAR AS TECLAS GLOBAIS NO KeyManager ---
+    light_factors = {
+        "ka": 1.0,
+        "kd": 1.0,
+        "ks": 1.0
+    }
+    keymanager.set_global_key(glfw.KEY_Z, lambda: adjust_light_up(light_factors, "ka"))
+    keymanager.set_global_key(glfw.KEY_X, lambda: adjust_light_down(light_factors, "ka"))
+    keymanager.set_global_key(glfw.KEY_C, lambda: adjust_light_up(light_factors, "kd"))
+    keymanager.set_global_key(glfw.KEY_V, lambda: adjust_light_down(light_factors, "kd"))
+    keymanager.set_global_key(glfw.KEY_B, lambda: adjust_light_up(light_factors, "ks"))
+    keymanager.set_global_key(glfw.KEY_N, lambda: adjust_light_down(light_factors, "ks"))
+
+    
     # show windows
     window.upload_data()
-    window.show()
-    window.enable()
 
-    pointLightPositions = [
-        glm.vec3( 10.0,  10.0,  10.0),
+
+    # Point Lights
+    internal_lights_data = [
+        {
+            "position": glm.vec3(2.77, 0.04, 11.269),
+            "ambient": glm.vec3(1.0, 0.0, 0.0),   
+            "diffuse": glm.vec3(1.0, 0.0, 0.0),     
+            "specular": glm.vec3(0.05, 0.0, 0.0),  
+            "constant": 1.0,
+            "linear": 0.09,
+            "quadratic": 0.032
+        }
+    ]
+    external_lights_data = [
+        {
+            "position": glm.vec3(20.0, 10.0, 20.0),
+            "ambient": glm.vec3(0.0, 1.0, 0.0),  
+            "diffuse": glm.vec3(0.0, 1.0, 0.0),  
+            "specular": glm.vec3(0.0, 1.0, 0.0), 
+            "constant": 1.0,
+            "linear": 0.07,
+            "quadratic": 0.017
+        }
     ]
 
-    window.shader.use()
-    window.shader.setInt("material.diffuse", 0)
-    window.shader.setInt("material.specular", 1)
-
-    window.shader.setVec3("dirLight.direction", -0.2, -1.0, -0.3)  # Exemplo: luz vindo de cima na diagonal
-
-    window.shader.setVec3("dirLight.ambient", 0.2, 0.2, 0.2)   # Luz ambiente moderada
-    window.shader.setVec3("dirLight.diffuse", 0.5, 0.5, 0.5)   # Luz difusa
-    #window.shader.setVec3("dirLight.specular", 1.0, 1.0, 1.0)  # Reflexos brilhantes
+    # Direcional Light
+    dir_light_data = {
+        "direction": glm.vec3(-0.2, -1.0, -0.3),
+        "ambient": glm.vec3(0.05, 0.05, 0.05),
+        "diffuse": glm.vec3(0.4, 0.4, 0.4),
+    }
 
 
-    window.shader.setVec3("pointLights[0].position", pointLightPositions[0])
-    window.shader.setVec3("pointLights[0].ambient", 0.1, 0.1, 0.05)
-    window.shader.setVec3("pointLights[0].diffuse", 0.9, 0.9, 0.5)
-    window.shader.setVec3("pointLights[0].specular", 1.0, 1.0, 0.6)
-    window.shader.setFloat("pointLights[0].constant", 1.0)
-    window.shader.setFloat("pointLights[0].linear", 0.09)
-    window.shader.setFloat("pointLights[0].quadratic", 0.032)
+    ilumination = Ilumination(
+        window.program,
+        internal_lights_data,
+        external_lights_data,
+        dir_light_data,
+        len(internal_lights_data),
+        len(external_lights_data)
+    )
 
-
+    window.show()
+    window.enable()
     while not window.should_close():
         world_rotation(globo)
-        renderer.render()
+        renderer.render(light_factors["ka"], light_factors["kd"], light_factors["ks"])
 
     window.terminate()
 

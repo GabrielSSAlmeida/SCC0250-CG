@@ -79,3 +79,28 @@ def nimbus_translation(model, dx=0, dy=0, dz=0, angle_x=None, angle_y=None, angl
         config['angle_y'] = angle_y
     if angle_z is not None:
         config['angle_z'] = angle_z
+
+
+# Ilumination functions
+def adjust_light_up(k: dict, name: str, increment: float = 0.1):
+    current_value = k.get(name, 0.0)
+    current_value += increment
+    if current_value >= 10.0:
+        current_value = 10.0
+    k[name] = current_value
+    print(f"{name.upper()}: {current_value:.2f}")
+
+def adjust_light_down(k: dict, name: str, decrement: float = 0.1):
+    current_value = k.get(name, 0.0)
+    current_value -= decrement
+    if current_value <= 0.0:
+        current_value = 0.0
+    k[name] = current_value
+    print(f"{name.upper()}: {current_value:.2f}")
+
+""" def enable_disable_constant(k: list, name: str):
+    if k[0] == 0.0:
+        k[0] = 1.0
+    else:
+        k[0] = 0.0
+    print(f"{name}: {k[0]:.2f}") """
