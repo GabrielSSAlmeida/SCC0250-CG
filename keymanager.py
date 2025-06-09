@@ -35,7 +35,7 @@ key_state = {
     glfw.KEY_2: False,
     glfw.KEY_3: False,
     glfw.KEY_4: False,
-    glfw.KEY_0: False,
+    glfw.KEY_5: False,
 }
 
 class KeyManager:

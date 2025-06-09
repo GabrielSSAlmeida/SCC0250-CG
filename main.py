@@ -25,7 +25,7 @@ import glfw
 import glm
 
 def main():
-    DEBUG = True
+    DEBUG = False
     fov = 45.0
     deltaTime = 0.005
 
@@ -358,9 +358,9 @@ def main():
     # keymanager.set_global_key_toggle(glfw.KEY_5, toggle_internal_spotlight(1)) # Varinha Spotlight
     # Spotlights externas: 6 (se houver)
     if len(external_spotlight_data) > 0:
-        keymanager.set_global_key_toggle(glfw.KEY_4, toggle_external_spotlight(0))
+        keymanager.set_global_key_toggle(glfw.KEY_5, toggle_external_spotlight(0))
     # Direcional: 0
-    keymanager.set_global_key_toggle(glfw.KEY_0, toggle_dir_light)
+    keymanager.set_global_key_toggle(glfw.KEY_4, toggle_dir_light)
 
     # --- NOVAS TECLAS PARA GRUPOS DE LUZES ---
     # Sugestões: KEY_Q para Taça, KEY_E para Varinha
