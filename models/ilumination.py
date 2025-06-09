@@ -29,9 +29,6 @@ class Ilumination:
         self._set_static_light_uniforms()
 
     def _cache_light_uniform_locations(self):
-        """
-        Cacheia as localizações dos uniforms das luzes no shader program.
-        """
         # Luz Direcional
         self._uniform_locations["dirLight.direction"] = glGetUniformLocation(self.shader_program, "dirLight.direction")
         self._uniform_locations["dirLight.ambient"] = glGetUniformLocation(self.shader_program, "dirLight.ambient")
@@ -75,25 +72,7 @@ class Ilumination:
             self._uniform_locations[f"internalSpotLights[{i}].outerCutOff"] = glGetUniformLocation(self.shader_program, f"internalSpotLights[{i}].outerCutOff")
             self._uniform_locations[f"internalSpotLights[{i}].isOn"] = glGetUniformLocation(self.shader_program, f"internalSpotLights[{i}].isOn")
 
-        # Spotlights Externos (descomente e adicione ao shader se for usar)
-        # for i in range(self.nr_external_spotlights_shader):
-        #     self._uniform_locations[f"externalSpotLights[{i}].position"] = glGetUniformLocation(self.shader_program, f"externalSpotLights[{i}].position")
-        #     self._uniform_locations[f"externalSpotLights[{i}].direction"] = glGetUniformLocation(self.shader_program, f"externalSpotLights[{i}].direction")
-        #     self._uniform_locations[f"externalSpotLights[{i}].ambient"] = glGetUniformLocation(self.shader_program, f"externalSpotLights[{i}].ambient")
-        #     self._uniform_locations[f"externalSpotLights[{i}].diffuse"] = glGetUniformLocation(self.shader_program, f"externalSpotLights[{i}].diffuse")
-        #     self._uniform_locations[f"externalSpotLights[{i}].specular"] = glGetUniformLocation(self.shader_program, f"externalSpotLights[{i}].specular")
-        #     self._uniform_locations[f"externalSpotLights[{i}].constant"] = glGetUniformLocation(self.shader_program, f"externalSpotLights[{i}].constant")
-        #     self._uniform_locations[f"externalSpotLights[{i}].linear"] = glGetUniformLocation(self.shader_program, f"externalSpotLights[{i}].linear")
-        #     self._uniform_locations[f"externalSpotLights[{i}].quadratic"] = glGetUniformLocation(self.shader_program, f"externalSpotLights[{i}].quadratic")
-        #     self._uniform_locations[f"externalSpotLights[{i}].cutOff"] = glGetUniformLocation(self.shader_program, f"externalSpotLights[{i}].cutOff")
-        #     self._uniform_locations[f"externalSpotLights[{i}].outerCutOff"] = glGetUniformLocation(self.shader_program, f"externalSpotLights[{i}].outerCutOff")
-        #     self._uniform_locations[f"externalSpotLights[{i}].isOn"] = glGetUniformLocation(self.shader_program, f"externalSpotLights[{i}].isOn")
-
     def _set_static_light_uniforms(self):
-        """
-        Envia os uniforms das luzes para o shader.
-        Este método é chamado apenas uma vez, pois as luzes são estáticas.
-        """
         glUseProgram(self.shader_program)
 
         # Luz Direcional
@@ -171,81 +150,37 @@ class Ilumination:
             if spotlight.get("isOn") is not None:
                 glUniform1i(self._uniform_locations[f"internalSpotLights[{idx}].isOn"], int(spotlight["isOn"]))
 
-        # Spotlights Externos (descomente e ative o uso no shader se for usar)
-        # for idx, spotlight in enumerate(self.external_spotlights_data):
-        #     if spotlight.get("position") is not None:
-        #         glUniform3fv(self._uniform_locations[f"externalSpotLights[{idx}].position"], 1, glm.value_ptr(spotlight["position"]))
-        #     if spotlight.get("direction") is not None:
-        #         glUniform3fv(self._uniform_locations[f"externalSpotLights[{idx}].direction"], 1, glm.value_ptr(spotlight["direction"]))
-        #     if spotlight.get("ambient") is not None:
-        #         glUniform3fv(self._uniform_locations[f"externalSpotLights[{idx}].ambient"], 1, glm.value_ptr(spotlight["ambient"]))
-        #     if spotlight.get("diffuse") is not None:
-        #         glUniform3fv(self._uniform_locations[f"externalSpotLights[{idx}].diffuse"], 1, glm.value_ptr(spotlight["diffuse"]))
-        #     if spotlight.get("specular") is not None:
-        #         glUniform3fv(self._uniform_locations[f"externalSpotLights[{idx}].specular"], 1, glm.value_ptr(spotlight["specular"]))
-        #     if spotlight.get("constant") is not None:
-        #         glUniform1f(self._uniform_locations[f"externalSpotLights[{idx}].constant"], spotlight["constant"])
-        #     if spotlight.get("linear") is not None:
-        #         glUniform1f(self._uniform_locations[f"externalSpotLights[{idx}].linear"], spotlight["linear"])
-        #     if spotlight.get("quadratic") is not None:
-        #         glUniform1f(self._uniform_locations[f"externalSpotLights[{idx}].quadratic"], spotlight["quadratic"])
-        #     if spotlight.get("cutOff") is not None:
-        #         glUniform1f(self._uniform_locations[f"externalSpotLights[{idx}].cutOff"], spotlight["cutOff"])
-        #     if spotlight.get("outerCutOff") is not None:
-        #         glUniform1f(self._uniform_locations[f"externalSpotLights[{idx}].outerCutOff"], spotlight["outerCutOff"])
-        #     if spotlight.get("isOn") is not None:
-        #         glUniform1i(self._uniform_locations[f"externalSpotLights[{idx}].isOn"], int(spotlight["isOn"]))
-
     def update_external_light_position(self, light_index: int, new_position: glm.vec3):
-        """
-        Atualiza APENAS a posição de uma luz externa específica no shader.
-        Chame este método a cada frame se a luz for dinâmica.
-        """
         glUseProgram(self.shader_program)
         uniform_name = f"externalLights[{light_index}].position"
         if uniform_name in self._uniform_locations:
             glUniform3fv(self._uniform_locations[uniform_name], 1, glm.value_ptr(new_position))
 
     def update_external_light_is_on(self, light_index: int, is_on: bool):
-        """
-        Atualiza APENAS o estado (isOn) de uma luz externa específica no shader.
-        """
         glUseProgram(self.shader_program)
         uniform_name = f"externalLights[{light_index}].isOn"
         if uniform_name in self._uniform_locations:
             glUniform1i(self._uniform_locations[uniform_name], int(is_on))
 
     def update_internal_light_is_on(self, light_index: int, is_on: bool):
-        """
-        Atualiza o estado (isOn) de uma luz interna específica no shader.
-        """
         glUseProgram(self.shader_program)
         uniform_name = f"internalLights[{light_index}].isOn"
         if uniform_name in self._uniform_locations:
             glUniform1i(self._uniform_locations[uniform_name], int(is_on))
 
     def update_internal_spotlight_is_on(self, spotlight_index: int, is_on: bool):
-        """
-        Atualiza o estado (isOn) de um spotlight interno específico no shader.
-        """
         glUseProgram(self.shader_program)
         uniform_name = f"internalSpotLights[{spotlight_index}].isOn"
         if uniform_name in self._uniform_locations:
             glUniform1i(self._uniform_locations[uniform_name], int(is_on))
 
     def update_external_spotlight_is_on(self, spotlight_index: int, is_on: bool):
-        """
-        Atualiza o estado (isOn) de um spotlight externo específico no shader.
-        """
         glUseProgram(self.shader_program)
         uniform_name = f"externalSpotLights[{spotlight_index}].isOn"
         if uniform_name in self._uniform_locations:
             glUniform1i(self._uniform_locations[uniform_name], int(is_on))
 
     def update_dir_light_is_on(self, is_on: bool):
-        """
-        Atualiza o estado (isOn) da luz direcional no shader.
-        """
         glUseProgram(self.shader_program)
         uniform_name = "dirLight.isOn"
         if uniform_name in self._uniform_locations:

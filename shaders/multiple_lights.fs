@@ -59,7 +59,7 @@ in vec3 FragPos;
 in vec3 Normal;
 in vec2 TexCoords;
 
-uniform vec3 viewPos; // Posição da câmera no mundo
+uniform vec3 viewPos;
 uniform PointLight internalLights[NR_INTERNAL_LIGHTS];
 uniform PointLight externalLights[NR_EXTERNAL_LIGHTS];
 uniform SpotLight internalSpotLights[NR_INTERNAL_SPOTLIGHTS];
@@ -67,7 +67,6 @@ uniform SpotLight internalSpotLights[NR_INTERNAL_SPOTLIGHTS];
 uniform DirLight dirLight;
 uniform Material material;
 
-// Novos uniforms para os limites da casa
 uniform vec3 houseMinBounds;
 uniform vec3 houseMaxBounds;
 
@@ -167,13 +166,11 @@ void main()
     vec3 norm = normalize(Normal);
     vec3 viewDir = normalize(viewPos - FragPos);
 
-    // Começamos com a luz direcional.
     vec3 result;
     if (dirLight.isOn) {
         result = CalcDirLight(dirLight, norm, viewDir);
     }
 
-    // Verificar se a câmera está DENTRO da caixa delimitadora da casa
     const float MIN_X = -3.06421f;
     const float MIN_Y = -2.0f;
     const float MIN_Z = -0.489827f;
@@ -186,7 +183,6 @@ void main()
                                    viewPos.z > MIN_Z && viewPos.z < MAX_Z);
 
     if (is_camera_inside_house) {
-        // Câmera está DENTRO da casa: aplicar SOMENTE luzes internas
         for (int i = 0; i < NR_INTERNAL_LIGHTS; i++) {
             if(!internalLights[i].isOn) continue;
             result += CalcPointLight(internalLights[i], norm, FragPos, viewDir);
@@ -196,7 +192,6 @@ void main()
             result += CalcSpotLight(internalSpotLights[i], norm, FragPos, viewDir);
         }
     } else {
-        // Câmera está FORA da casa: aplicar SOMENTE luzes externas
         for (int i = 0; i < NR_EXTERNAL_LIGHTS; i++) {
             if(!externalLights[i].isOn) continue;
             result += CalcPointLight(externalLights[i], norm, FragPos, viewDir);

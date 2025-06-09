@@ -53,9 +53,8 @@ class Window:
         glfw.swap_buffers(self.glfw_window)
 
     def upload_data(self):
-        glBindVertexArray(self.VAO) # inicia VAO
+        glBindVertexArray(self.VAO)
 
-        # --- Posições ---
         vertices = np.zeros(len(FileManager.vertices_list), [("position", np.float32, 3)])
         vertices['position'] = FileManager.vertices_list
 
@@ -68,7 +67,6 @@ class Window:
         glVertexAttribPointer(loc_vertices, 3, GL_FLOAT, False, stride, offset)
 
 
-        # --- Normais ---
         normals = np.zeros(len(FileManager.normals_list), [("position", np.float32, 3)])
         normals['position'] = FileManager.normals_list
 
@@ -80,7 +78,6 @@ class Window:
         glEnableVertexAttribArray(loc_normais)
         glVertexAttribPointer(loc_normais, 3, GL_FLOAT, False, stride, offset)
 
-        # --- Coordenadas de textura ---
         textures = np.zeros(len(FileManager.textures_coord_list), [("position", np.float32, 2)])
         textures['position'] = FileManager.textures_coord_list
 

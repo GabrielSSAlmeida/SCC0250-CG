@@ -1,5 +1,6 @@
 from math import sqrt
 from models.model_3D import Model_3D
+import glm
 
 def world_rotation(model):
     config = model.modelConfig
@@ -98,9 +99,53 @@ def adjust_light_down(k: dict, name: str, decrement: float = 0.1):
     k[name] = current_value
     print(f"{name.upper()}: {current_value:.2f}")
 
-""" def enable_disable_constant(k: list, name: str):
-    if k[0] == 0.0:
-        k[0] = 1.0
+
+
+def toggle_moving_light_to_destination(external_lights_data, light_move_pos1, light_move_pos2, ilumination, current_light_state_ref):
+    current_external_light_visual_pos = external_lights_data[0]["position"]
+    tolerance = 0.5 
+    
+    if current_light_state_ref[0] == 0: 
+        if glm.distance(current_external_light_visual_pos, light_move_pos1) < tolerance:
+            current_light_state_ref[0] = 2 # Mover para pos2
+        elif glm.distance(current_external_light_visual_pos, light_move_pos2) < tolerance:
+            current_light_state_ref[0] = 1 # Mover para pos1
+        else:
+            current_light_state_ref[0] = 1
     else:
-        k[0] = 0.0
-    print(f"{name}: {k[0]:.2f}") """
+        current_light_state_ref[0] = 0
+    
+
+def make_toggle_external_light(idx, external_lights_data, ilumination):
+    def toggle(_=None):
+        external_lights_data[idx]["isOn"] = not external_lights_data[idx]["isOn"]
+        ilumination.update_external_light_is_on(idx, external_lights_data[idx]["isOn"])
+    return toggle
+
+def toggle_dir_light(dir_light_data, ilumination):
+    dir_light_data["isOn"] = not dir_light_data["isOn"]
+    ilumination.update_dir_light_is_on(dir_light_data["isOn"])
+
+def toggle_wand_lights(internal_lights_data, internal_spotlight_data, ilumination):
+    current_state_point = internal_lights_data[1]["isOn"]
+    current_state_spot = internal_spotlight_data[1]["isOn"]
+    
+    new_state = not (current_state_point or current_state_spot) 
+
+    internal_lights_data[1]["isOn"] = new_state
+    ilumination.update_internal_light_is_on(1, new_state)
+    
+    internal_spotlight_data[1]["isOn"] = new_state
+    ilumination.update_internal_spotlight_is_on(1, new_state)
+
+def toggle_goblet_lights(internal_lights_data, internal_spotlight_data, ilumination):
+    current_state_point = internal_lights_data[0]["isOn"]
+    current_state_spot = internal_spotlight_data[0]["isOn"]
+    
+    new_state = not (current_state_point or current_state_spot)
+
+    internal_lights_data[0]["isOn"] = new_state
+    ilumination.update_internal_light_is_on(0, new_state)
+    
+    internal_spotlight_data[0]["isOn"] = new_state
+    ilumination.update_internal_spotlight_is_on(0, new_state)

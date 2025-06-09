@@ -5,7 +5,6 @@ from typing import List
 import glm
 
 
-# Em Renderer.py
 class Renderer:
     def __init__(self, window, view, mat_projection):
         self.window: Window = window
@@ -56,9 +55,7 @@ class Renderer:
         glUniform1f(self._uniform_locations["global_kd"], kd_val)
         glUniform1f(self._uniform_locations["global_ks"], ks_val)
 
-        # Renderizar todos os modelos
         for model in self.models:
-            # model.draw já envia a matriz do modelo e a posição da câmera
             model.draw(self.window.program, self.view.cameraPos)
 
         self.window.swap_buffers()

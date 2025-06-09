@@ -11,14 +11,6 @@ class Model_3D(ModelBase):
         return GL_TRIANGLES
 
     def set_position(self, x, y, z):
-        """
-        Define a posição de translação do modelo.
-
-        Args:
-            x (float): Coordenada X da posição.
-            y (float): Coordenada Y da posição.
-            z (float): Coordenada Z da posição.
-        """
         self.modelConfig["t_x"] = x
         self.modelConfig["t_y"] = y
         self.modelConfig["t_z"] = z
