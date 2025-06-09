@@ -27,9 +27,27 @@ struct DirLight {
     vec3 specular;
 };
 
+struct SpotLight {
+    vec3 position;
+    vec3 direction;
+    float cutOff;
+    float outerCutOff;
+  
+    float constant;
+    float linear;
+    float quadratic;
+  
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;       
+};
 
-#define NR_INTERNAL_LIGHTS 1 // Certifique-se de que este número é o máximo que você terá
-#define NR_EXTERNAL_LIGHTS 1 // Certifique-se de que este número é o máximo que você terá
+
+#define NR_INTERNAL_LIGHTS 2
+#define NR_EXTERNAL_LIGHTS 1
+
+#define NR_INTERNAL_SPOTLIGHTS 2
+#define NR_EXTERNAL_SPOTLIGHTS 0
 
 in vec3 FragPos;
 in vec3 Normal;
@@ -38,6 +56,8 @@ in vec2 TexCoords;
 uniform vec3 viewPos; // Posição da câmera no mundo
 uniform PointLight internalLights[NR_INTERNAL_LIGHTS];
 uniform PointLight externalLights[NR_EXTERNAL_LIGHTS];
+uniform SpotLight internalSpotLights[NR_INTERNAL_SPOTLIGHTS];
+//uniform SpotLight externalSpotLights[NR_EXTERNAL_SPOTLIGHTS];
 uniform DirLight dirLight;
 uniform Material material;
 
@@ -109,6 +129,32 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir)
     return (ambient + diffuse + specular);
 }
 
+vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
+{
+    vec3 lightDir = normalize(light.position - fragPos);
+    // diffuse shading
+    float diff = max(dot(normal, lightDir), 0.0);
+    // specular shading
+    vec3 reflectDir = reflect(-lightDir, normal);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+    // attenuation
+    float distance = length(light.position - fragPos);
+    float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));    
+    // spotlight intensity
+    float theta = dot(lightDir, normalize(-light.direction)); 
+    float epsilon = light.cutOff - light.outerCutOff;
+    float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
+    // combine results
+    vec3 texColor = vec3(texture(material.diffuse, TexCoords));
+    vec3 ambient = light.ambient * texColor * global_ka;
+    vec3 diffuse = light.diffuse * diff * texColor * global_kd;
+    vec3 specular = light.specular * spec * global_ks;
+    ambient *= attenuation * intensity;
+    diffuse *= attenuation * intensity;
+    specular *= attenuation * intensity;
+    return (ambient + diffuse + specular);
+}
+
 
 void main()
 {
@@ -116,9 +162,7 @@ void main()
     vec3 viewDir = normalize(viewPos - FragPos);
 
     // Começamos com a luz direcional.
-    // Você pode decidir se ela afeta o interior da casa ou não.
-    // Por enquanto, vamos aplicá-la sempre, já que ela simula o sol/lua.
-    vec3 result; 
+    vec3 result = CalcDirLight(dirLight, norm, viewDir);
 
     // Verificar se a câmera está DENTRO da caixa delimitadora da casa
     const float MIN_X = -3.06421f;
@@ -137,12 +181,17 @@ void main()
         for (int i = 0; i < NR_INTERNAL_LIGHTS; i++) {
             result += CalcPointLight(internalLights[i], norm, FragPos, viewDir);
         }
+        for (int i = 0; i < NR_INTERNAL_SPOTLIGHTS; i++) {
+            result += CalcSpotLight(internalSpotLights[i], norm, FragPos, viewDir);
+        }
     } else {
-        result += CalcDirLight(dirLight, norm, viewDir);
         // Câmera está FORA da casa: aplicar SOMENTE luzes externas
         for (int i = 0; i < NR_EXTERNAL_LIGHTS; i++) {
             result += CalcPointLight(externalLights[i], norm, FragPos, viewDir);
         }
+        // for (int i = 0; i < NR_EXTERNAL_SPOTLIGHTS; i++) {
+        //     result += CalcSpotLight(externalSpotLights[i], norm, FragPos, viewDir);
+        // }
     }
 
     FragColor = vec4(result, 1.0);

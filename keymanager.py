@@ -3,7 +3,6 @@ import glfw
 import glm
 
 # Mantém o estado das teclas que queremos monitorar continuamente (para "PRESS" e "REPEAT")
-# Pode ser expandido com mais teclas se necessário.
 key_state = {
     # HARRY (exemplo, se você tiver um Harry)
     glfw.KEY_Y: False,
@@ -23,77 +22,101 @@ key_state = {
     glfw.KEY_D: False,
     glfw.KEY_SPACE: False,
     glfw.KEY_LEFT_CONTROL: False,
-    # Novos para iluminação
+    # Novos para iluminação (contínuos)
     glfw.KEY_Z: False,
     glfw.KEY_X: False,
     glfw.KEY_C: False,
     glfw.KEY_V: False,
     glfw.KEY_B: False,
     glfw.KEY_N: False,
+    # NOVO: Tecla para a luz móvel (toggle)
+    glfw.KEY_M: False,
 }
 
 class KeyManager:
     def __init__(self, window, renderer, view, debug=False):
         self.window = window
         self.renderer = renderer
-        self.key_map = {} # Mapas de chave para (ação, modelos) para ações que atuam em modelos
-        self.global_key_map = {} # Novo: Mapas de chave para ação global
+        self.key_map = {} # Mapas de chave para (ação, modelos) para ações que atuam em modelos (contínuas)
+        
+        # NOVO: Duas estruturas para ações globais
+        self.global_key_map_continuous = {} # Para ações que se repetem enquanto a tecla está segurada (ex: iluminação)
+        self.global_key_map_toggle = {}     # Para ações de toque único (ex: ligar/desligar luz, trocar polígono)
+        
         self.view = view
         self.debug = debug
+        
+        # NOVO: Conjunto para controlar teclas de 'toggle' que já foram processadas no PRESS
+        self.processed_toggle_keys = set() 
+        
         glfw.set_key_callback(window.glfw_window, self.key_event)
 
     def set_key(self, key, action, models):
         """
         Associa uma função a um modelo(s) para uma tecla específica.
-        Usado para ações que modificam modelos.
+        Usado para ações que modificam modelos (presume-se que sejam contínuas).
         """
         if not isinstance(models, list):
             models = [models]
         self.key_map[key] = (action, models)
     
-    # --- NOVO MÉTODO: set_global_key ---
-    def set_global_key(self, key, action):
+    # NOVO MÉTODO: set_global_key_continuous
+    def set_global_key_continuous(self, key, action):
         """
-        Associa uma função a uma tecla específica, sem ligá-la a modelos.
-        Usado para ações globais (ex: mudar iluminação, modo de polígono).
+        Associa uma função a uma tecla para uma ação global que se repete
+        enquanto a tecla está pressionada.
         """
-        self.global_key_map[key] = action
-    # ------------------------------------
+        self.global_key_map_continuous[key] = action
+    
+    # NOVO MÉTODO: set_global_key_toggle
+    def set_global_key_toggle(self, key, action):
+        """
+        Associa uma função a uma tecla para uma ação global de toque único (toggle).
+        A ação é disparada apenas no evento glfw.PRESS.
+        """
+        self.global_key_map_toggle[key] = action
 
     def key_event(self, w, key, scancode, action, mods):
-        # --- Lógica para teclas de pressão única ou que iniciam um estado ---
-        # Poligon Mode (pode ser um toggle, então só PRESS ou REPEAT faz sentido)
-        if key == glfw.KEY_P and (action == glfw.PRESS or action == glfw.REPEAT):
-            self.renderer.setPolygonMode()
-        # Escape para fechar a janela
-        if key == glfw.KEY_ESCAPE and (action == glfw.PRESS or action == glfw.REPEAT):
-            self.window.close()
-        
-        # --- Atualizar o estado global das teclas ---
+        # --- Atualizar o estado global das teclas monitoradas continuamente ---
         if key in key_state:
             if action == glfw.PRESS:
                 key_state[key] = True
-            elif action == glfw.RELEASE: # Importante para liberar o estado da tecla
+            elif action == glfw.RELEASE:
                 key_state[key] = False
+                # Se a tecla foi solta, a removemos do conjunto de teclas de 'toggle' processadas
+                if key in self.processed_toggle_keys:
+                    self.processed_toggle_keys.remove(key)
 
+        # --- Processar ações de Toque Único (Toggle) ---
+        if action == glfw.PRESS: # Apenas no pressionar inicial da tecla
+            if key in self.global_key_map_toggle and key not in self.processed_toggle_keys:
+                self.global_key_map_toggle[key]() # Chama a função de toggle
+                self.processed_toggle_keys.add(key) # Marca como processada para este toque
+
+        # --- Lógica para Poligon Mode (agora tratado como toggle global) ---
+        # Removi daqui e movi para `set_global_key_toggle` no `main.py`
+        # para centralizar a configuração de teclas.
+
+        # --- Escape para fechar a janela (ainda pode ser aqui ou como toggle global) ---
+        if key == glfw.KEY_ESCAPE and (action == glfw.PRESS or action == glfw.REPEAT):
+            self.window.close()
+        
         # --- Processar ações de câmera (W, S, A, D, SPACE, L_CTRL) ---
-        # Estas podem ser processadas diretamente aqui ou você pode movê-las
-        # para callbacks separados para maior modularidade, similar aos modelos.
-        # Por enquanto, mantemos aqui para simplicidade com a câmera.
-        cameraSpeed = 200 * self.view.deltaTime # Mantenha o cálculo do delta time atualizado
+        # Este bloco permanece para ações contínuas da câmera
+        cameraSpeed = 180 * self.view.deltaTime
         
         if key_state[glfw.KEY_W]:
             self.view.cameraPos += cameraSpeed * self.view.cameraFront
-            if self.debug: print(f"{self.view.cameraPos}")
+            if self.debug: print(f"{self.view.cameraPos}, {self.view.cameraFront}")
         if key_state[glfw.KEY_S]:
             self.view.cameraPos -= cameraSpeed * self.view.cameraFront
-            if self.debug: print(f"{self.view.cameraPos}")
+            if self.debug: print(f"{self.view.cameraPos}, {self.view.cameraFront}")
         if key_state[glfw.KEY_A]:
             self.view.cameraPos -= glm.normalize(glm.cross(self.view.cameraFront, self.view.cameraUp)) * cameraSpeed
-            if self.debug: print(f"{self.view.cameraPos}")
+            if self.debug: print(f"{self.view.cameraPos}, {self.view.cameraFront}")
         if key_state[glfw.KEY_D]:
             self.view.cameraPos += glm.normalize(glm.cross(self.view.cameraFront, self.view.cameraUp)) * cameraSpeed
-            if self.debug: print(f"{self.view.cameraPos}")
+            if self.debug: print(f"{self.view.cameraPos}, {self.view.cameraFront}")
         if key_state[glfw.KEY_SPACE]:
             self.view.cameraPos += cameraSpeed * glm.vec3(0.0, 1.0, 0.0)
         if key_state[glfw.KEY_LEFT_CONTROL]:
@@ -101,14 +124,13 @@ class KeyManager:
 
         self.view.update_view_matrix()
         
-        # --- Processar ações globais (NOVAS) ---
-        # Se a tecla está pressionada e tem uma ação global associada
-        for k, action_func in self.global_key_map.items():
+        # --- Processar ações globais Contínuas ---
+        # Se a tecla está pressionada (PRESS ou REPEAT) e tem uma ação global contínua associada
+        for k, action_func in self.global_key_map_continuous.items():
             if k in key_state and key_state[k]:
-                action_func() # Chama a função global
+                action_func() # Chama a função global contínua
 
-        # --- Processar ações de modelos ---
-        # Se a tecla está pressionada e tem uma ação de modelo associada
+        # --- Processar ações de modelos (já eram contínuas) ---
         for k, (action_func, models) in self.key_map.items():
             if k in key_state and key_state[k]:
                 for m in models:

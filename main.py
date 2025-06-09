@@ -25,7 +25,7 @@ import glfw
 import glm
 
 def main():
-    DEBUG = False
+    DEBUG = True
     fov = 45.0
     deltaTime = 0.005
 
@@ -113,13 +113,13 @@ def main():
         cartas, 
         caixa,
         cadeira,
-        cuboIn,
-        cuboEx,
+        # cuboIn,
+        # cuboEx,
         poste,
         trofeu,
         varinha,
         lamparina,
-    ] + trees + aboboras)
+    ] + trees)
 
 
     # ABÓBORA
@@ -146,40 +146,89 @@ def main():
         "kd": 1.0,
         "ks": 1.0
     }
-    keymanager.set_global_key(glfw.KEY_Z, lambda: adjust_light_up(light_factors, "ka"))
-    keymanager.set_global_key(glfw.KEY_X, lambda: adjust_light_down(light_factors, "ka"))
-    keymanager.set_global_key(glfw.KEY_C, lambda: adjust_light_up(light_factors, "kd"))
-    keymanager.set_global_key(glfw.KEY_V, lambda: adjust_light_down(light_factors, "kd"))
-    keymanager.set_global_key(glfw.KEY_B, lambda: adjust_light_up(light_factors, "ks"))
-    keymanager.set_global_key(glfw.KEY_N, lambda: adjust_light_down(light_factors, "ks"))
+    keymanager.set_global_key_continuous(glfw.KEY_Z, lambda: adjust_light_up(light_factors, "ka"))
+    keymanager.set_global_key_continuous(glfw.KEY_X, lambda: adjust_light_down(light_factors, "ka"))
+    keymanager.set_global_key_continuous(glfw.KEY_C, lambda: adjust_light_up(light_factors, "kd"))
+    keymanager.set_global_key_continuous(glfw.KEY_V, lambda: adjust_light_down(light_factors, "kd"))
+    keymanager.set_global_key_continuous(glfw.KEY_B, lambda: adjust_light_up(light_factors, "ks"))
+    keymanager.set_global_key_continuous(glfw.KEY_N, lambda: adjust_light_down(light_factors, "ks"))
+
+    # Ação de Toque Único (Toggle) para o modo de polígono
+    keymanager.set_global_key_toggle(glfw.KEY_P, renderer.setPolygonMode)
 
     
     # show windows
     window.upload_data()
 
-
+    # --- NOVA POINTLIGHT EXTERNA MÓVEL ---
+    # Definir as duas posições para a luz se mover
+    light_move_pos1 = glm.vec3(-1.84708,      7.35508,      -8.9835) # Posição inicial (cuboEx)
+    light_move_pos2 = glm.vec3(2.88557,    -0.625115,      2.98775) # Segunda posição (exemplo)
+    
+    # Variáveis de controle para a luz móvel
+    current_light_state = 0 
+    moving_light_progress = 0.0
     # Point Lights
     internal_lights_data = [
-        {
-            "position": glm.vec3(2.77, 0.04, 11.269),
-            "ambient": glm.vec3(1.0, 0.0, 0.0),   
-            "diffuse": glm.vec3(1.0, 0.0, 0.0),     
-            "specular": glm.vec3(0.05, 0.0, 0.0),  
+        { # Taça
+            "position": glm.vec3(-0.5, -3.0, 12.3),
+            "ambient": glm.vec3(0.0, 0.2, 0.8),   
+            "diffuse": glm.vec3(0.0, 0.4, 1.0),     
+            "specular": glm.vec3(0.0, 0.6, 1.0),  
+            "constant": 1.0,
+            "linear": 0.35,
+            "quadratic": 0.44
+        },
+        { # Varinha
+            "position": glm.vec3(4.49986, -1.16163, 11.8),
+            "ambient": glm.vec3(0.2, 0.2, 0.2),
+            "diffuse": glm.vec3(1.0, 1.0, 1.0),
+            "specular": glm.vec3(1.0, 1.0, 1.0),
             "constant": 1.0,
             "linear": 0.09,
-            "quadratic": 0.032
+            "quadratic": 50.0,
         }
+
     ]
     external_lights_data = [
         {
-            "position": glm.vec3(20.0, 10.0, 20.0),
-            "ambient": glm.vec3(0.0, 1.0, 0.0),  
-            "diffuse": glm.vec3(0.0, 1.0, 0.0),  
-            "specular": glm.vec3(0.0, 1.0, 0.0), 
+            "position": light_move_pos1, # Posição inicial
+            "ambient": glm.vec3(0.8, 0.8, 0.8), # Um pouco de ambiente
+            "diffuse": glm.vec3(0.8, 0.8, 0.8), # Cor verde (ou a que preferir para diferenciar)
+            "specular": glm.vec3(1.0, 1.0, 1.0), 
             "constant": 1.0,
             "linear": 0.07,
-            "quadratic": 0.017
+            "quadratic": 0.017 # Pode ajustar esta atenuação também
         }
+    ]
+
+    internal_spotlight_data = [
+        { # Taça
+            "position": glm.vec3(-0.5, -3.0, 12.3),
+            "direction": glm.vec3(0.0, 1.0, 0.0),
+            "ambient": glm.vec3(0.0, 0.0, 0.0),   
+            "diffuse": glm.vec3(0.0, 0.4, 1.0),     
+            "specular": glm.vec3(0.0, 0.6, 1.0),  
+            "constant": 1.0,
+            "linear": 0.09,
+            "quadratic": 0.032,
+            "cutOff": glm.cos(glm.radians(12.5)),
+            "outerCutOff": glm.cos(glm.radians(15.0)),
+        },
+        { # Varinha
+            "position": glm.vec3(4.49986, -1.16163, 11.8),
+            "direction": glm.vec3(0.873249, 0.147809, -0.464315),
+            "ambient": glm.vec3(0.0, 0.0, 0.0),
+            "diffuse": glm.vec3(0.8, 0.8, 0.8),
+            "specular": glm.vec3(0.8, 0.8, 0.8),
+            "constant": 1.0,
+            "linear": 0.09,
+            "quadratic": 0.032,
+            "cutOff": glm.cos(glm.radians(50.0)), 
+            "outerCutOff": glm.cos(glm.radians(60.5)),
+        }
+    ]
+    external_spotlight_data = [
     ]
 
     # Direcional Light
@@ -192,16 +241,93 @@ def main():
 
     ilumination = Ilumination(
         window.program,
-        internal_lights_data,
-        external_lights_data,
+        [internal_lights_data, len(internal_lights_data)],
+        [external_lights_data, len(external_lights_data)],
+        [internal_spotlight_data, len(internal_spotlight_data)],
+        [external_spotlight_data, len(external_spotlight_data)],
         dir_light_data,
-        len(internal_lights_data),
-        len(external_lights_data)
     )
+
+    
+    def toggle_moving_light_to_destination():
+        nonlocal current_light_state, moving_light_progress
+        
+        if current_light_state == 0: # Se está parada, começa a mover para a próxima posição
+            # Verifica qual a posição atual da luz para decidir para onde ir
+            # Vamos usar uma pequena tolerância para considerar que a luz está em pos1 ou pos2
+            
+            # ATENÇÃO: current_external_light_pos é uma variável do loop principal.
+            # Precisamos pegá-la de algum lugar ou inicializar corretamente.
+            # Para simplificar, vamos assumir que a luz começa em light_move_pos1.
+            # E a cada clique, ela alterna entre ir para pos2 ou pos1.
+            
+            # Posição atual da luz externa no array de dados
+            current_external_light_visual_pos = external_lights_data[0]["position"]
+
+            # Se está perto da pos1, vai para pos2. Caso contrário, vai para pos1.
+            # Usamos uma pequena tolerância para a comparação de floats
+            tolerance = 0.5 
+            if glm.distance(current_external_light_visual_pos, light_move_pos1) < tolerance:
+                current_light_state = 2 # Mover para pos2
+                print("Luz Externa Móvel: Indo para Posição 2")
+            elif glm.distance(current_external_light_visual_pos, light_move_pos2) < tolerance:
+                current_light_state = 1 # Mover para pos1
+                print("Luz Externa Móvel: Indo para Posição 1")
+            else: # Se não está em nenhuma das posições conhecidas, vai para pos1 por padrão
+                current_light_state = 1
+                print("Luz Externa Móvel: Posição desconhecida, indo para Posição 1")
+            
+            # Reinicia o progresso da animação
+            moving_light_progress = 0.0
+        else:
+            # Se já está em movimento (estado 1 ou 2), um novo clique 'M' pode pará-la
+            current_light_state = 0
+            print("Luz Externa Móvel: Parada (movimento interrompido)")
+
+    keymanager.set_global_key_toggle(glfw.KEY_M, toggle_moving_light_to_destination)
+
 
     window.show()
     window.enable()
+
+    last_frame_time = glfw.get_time()
     while not window.should_close():
+        current_frame_time = glfw.get_time()
+        deltaTime = current_frame_time - last_frame_time
+        last_frame_time = current_frame_time
+
+        #view.deltaTime = deltaTime
+        
+        world_rotation(globo)
+        
+        # --- LÓGICA DE MOVIMENTO DA LUZ EXTERNA NO LOOP PRINCIPAL ---
+        if current_light_state != 0: # Se a luz está em estado de movimento
+            move_speed = 10.0 * deltaTime # Ajuste a velocidade conforme necessário
+            
+            target_pos = None
+            start_pos = external_lights_data[0]["position"] # Posição atual da luz
+
+            if current_light_state == 1: # Indo para pos1
+                target_pos = light_move_pos1
+            elif current_light_state == 2: # Indo para pos2
+                target_pos = light_move_pos2
+
+            if target_pos is not None:
+                # Calcula a distância restante
+                distance_to_target = glm.distance(start_pos, target_pos)
+
+                if distance_to_target > move_speed: # Se ainda não chegou, move
+                    # Normaliza o vetor direção e move um passo
+                    direction_vector = glm.normalize(target_pos - start_pos)
+                    current_external_light_pos = start_pos + direction_vector * move_speed
+                    external_lights_data[0]["position"] = current_external_light_pos
+                    ilumination.update_external_light_position(0, current_external_light_pos)
+                else: # Chegou ao destino
+                    external_lights_data[0]["position"] = target_pos # Define a posição exata
+                    ilumination.update_external_light_position(0, target_pos)
+                    current_light_state = 0 # Para o movimento
+                    print("Luz Externa Móvel: Chegou ao destino e parou.")
+
         world_rotation(globo)
         renderer.render(light_factors["ka"], light_factors["kd"], light_factors["ks"])
 

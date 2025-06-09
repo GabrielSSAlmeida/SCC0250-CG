@@ -8,7 +8,6 @@ import glm
 # Em Renderer.py
 class Renderer:
     def __init__(self, window, view, mat_projection):
-        # ... seu código existente ...
         self.window: Window = window
         self.models: List[ModelBase] = []
         self.view = view
