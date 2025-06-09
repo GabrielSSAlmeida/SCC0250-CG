@@ -10,6 +10,19 @@ class Model_3D(ModelBase):
     def primitive_type(self):
         return GL_TRIANGLES
 
+    def set_position(self, x, y, z):
+        """
+        Define a posição de translação do modelo.
+
+        Args:
+            x (float): Coordenada X da posição.
+            y (float): Coordenada Y da posição.
+            z (float): Coordenada Z da posição.
+        """
+        self.modelConfig["t_x"] = x
+        self.modelConfig["t_y"] = y
+        self.modelConfig["t_z"] = z
+
     # implements get_transform_matrix
     def get_transform_matrix(self, angle_x=0.0, angle_y=0.0, angle_z=0.0,
                          t_x=0.0, t_y=0.0, t_z=0.0,

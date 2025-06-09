@@ -51,7 +51,7 @@ def main():
     vi_cartas, n_cartas, tex_cartas = FileManager.load_obj_and_texture('objects/cartas.obj', ['textures/cartas.png'])
     vi_caixa, n_caixa, tex_caixa = FileManager.load_obj_and_texture('objects/caixa.obj', ['textures/caixa.png'])
     vi_cadeira, n_cadeira, tex_cadeira = FileManager.load_obj_and_texture('objects/cadeira.obj', ['textures/Madera_puerta_Albedo.png'])
-    vi_cubo, n_cubo, tex_cubo = FileManager.load_obj_and_texture('objects/cubo_teste.obj', ['textures/caixa.png'])
+    vi_sphere, n_sphere, tex_sphere = FileManager.load_obj_and_texture('objects/low_poly_sphere.obj', ['textures/branco.jpg'])
     vi_poste, n_poste, tex_poste = FileManager.load_obj_and_texture('objects/lamp_street_.obj', ['textures/lamp_street.png'])
     vi_trofeu, n_trofeu, tex_trofeu = FileManager.load_obj_and_texture('objects/trofeu.obj', ['textures/trofeu.png'])
     vi_varinha, n_varinha, tex_varinha = FileManager.load_obj_and_texture('objects/varinha.obj', ['textures/varinha.png'])
@@ -76,17 +76,12 @@ def main():
     varinha = Model_3D(vi_varinha, n_varinha, VARINHA, tex_varinha)
     lamparina = Model_3D(vi_lamparina, n_lamparina, LAMPARINA, tex_lamparina)
     
-    
+    # ATENÇÃO: removi a translação inicial do sphereEx para que ele comece na posição da luz
+    sphereEx = Model_3D(vi_sphere, n_sphere, SPHERE, tex_sphere)
 
-    cuboEx = Model_3D(vi_cubo, n_cubo, CUBO, tex_cubo)
-    cuboIn = Model_3D(vi_cubo, n_cubo, CUBO, tex_cubo)
-    cuboEx.translate(20.0, 10.0, 20.0)
-    cuboIn.translate(2.77, 0.04, 11.269)
 
     tree_positions = [(-20, -20), (10, -20), (-20, 20), (20, 20)]
     trees = create_n_models(vi_tree, n_tree, tex_tree, tree_positions, TREE)
-
-   
 
     abobora_positions = [(-10, -10), (-5, -5), (-2, -5), (-5, -2)]
     aboboras = create_n_models(vi_abobora, n_abobora, tex_abobora, abobora_positions, ABOBORA)
@@ -95,8 +90,6 @@ def main():
     # ====== KEY MANAGER ======
     keymanager = KeyManager(window, renderer, view, debug=DEBUG)
     mousemanager = MouseManager(window, view, projection)
-
-
 
     # prepare models to render
     renderer.add_model([
@@ -113,13 +106,13 @@ def main():
         cartas, 
         caixa,
         cadeira,
-        # cuboIn,
-        # cuboEx,
+        # sphereIn, # sphere interno, permanece aqui
+        sphereEx, # AGORA INCLUÍMOS O sphere EXTERNO AQUI
         poste,
         trofeu,
         varinha,
         lamparina,
-    ] + trees)
+    ] + trees + aboboras) # Adicionei aboboras aqui também
 
 
     # ABÓBORA
@@ -132,12 +125,12 @@ def main():
     # keymanager.set_key(glfw.KEY_U, lambda m: m.rotate(5, 0, 0, 1), pomo)
 
     # # NIMBUS
-    # keymanager.set_key(glfw.KEY_KP_4, lambda m: nimbus_translation(m, dx=-0.3, angle_y=180), nimbus)   
-    # keymanager.set_key(glfw.KEY_KP_6, lambda m: nimbus_translation(m, dx=0.3, angle_x=90), nimbus)   
-    # keymanager.set_key(glfw.KEY_KP_2, lambda m: nimbus_translation(m, dy=-0.3, angle_z=270), nimbus)  
-    # keymanager.set_key(glfw.KEY_KP_5, lambda m: nimbus_translation(m, dy=0.3, angle_z=90), nimbus)   
-    # keymanager.set_key(glfw.KEY_KP_1, lambda m: nimbus_translation(m, dz=-0.3, angle_y=90), nimbus)    
-    # keymanager.set_key(glfw.KEY_KP_3, lambda m: nimbus_translation(m, dz=0.3, angle_y=270), nimbus)  
+    # keymanager.set_key(glfw.KEY_KP_4, lambda m: nimbus_translation(m, dx=-0.3, angle_y=180), nimbus)   
+    # keymanager.set_key(glfw.KEY_KP_6, lambda m: nimbus_translation(m, dx=0.3, angle_x=90), nimbus)   
+    # keymanager.set_key(glfw.KEY_KP_2, lambda m: nimbus_translation(m, dy=-0.3, angle_z=270), nimbus)  
+    # keymanager.set_key(glfw.KEY_KP_5, lambda m: nimbus_translation(m, dy=0.3, angle_z=90), nimbus)   
+    # keymanager.set_key(glfw.KEY_KP_1, lambda m: nimbus_translation(m, dz=-0.3, angle_y=90), nimbus)    
+    # keymanager.set_key(glfw.KEY_KP_3, lambda m: nimbus_translation(m, dz=0.3, angle_y=270), nimbus)  
 
 
     # --- CONFIGURAR AS TECLAS GLOBAIS NO KeyManager ---
@@ -162,8 +155,8 @@ def main():
 
     # --- NOVA POINTLIGHT EXTERNA MÓVEL ---
     # Definir as duas posições para a luz se mover
-    light_move_pos1 = glm.vec3(-1.84708,      7.35508,      -8.9835) # Posição inicial (cuboEx)
-    light_move_pos2 = glm.vec3(2.88557,    -0.625115,      2.98775) # Segunda posição (exemplo)
+    light_move_pos1 = glm.vec3(-2.09392,      7.35174,     -8.98131) # Posição inicial (sphereEx)
+    light_move_pos2 = glm.vec3(3.0,     -0.625115,       3.0) # Posição final (sphereEx)
     
     # Variáveis de controle para a luz móvel
     current_light_state = 0 
@@ -174,7 +167,7 @@ def main():
             "position": glm.vec3(-0.5, -3.0, 12.3),
             "ambient": glm.vec3(0.0, 0.2, 0.8),   
             "diffuse": glm.vec3(0.0, 0.4, 1.0),     
-            "specular": glm.vec3(0.0, 0.6, 1.0),  
+            "specular": glm.vec3(0.0, 0.6, 1.0),   
             "constant": 1.0,
             "linear": 0.35,
             "quadratic": 0.44,
@@ -211,7 +204,7 @@ def main():
             "direction": glm.vec3(0.0, 1.0, 0.0),
             "ambient": glm.vec3(0.0, 0.0, 0.0),   
             "diffuse": glm.vec3(0.0, 0.4, 1.0),     
-            "specular": glm.vec3(0.0, 0.6, 1.0),  
+            "specular": glm.vec3(0.0, 0.6, 1.0),   
             "constant": 1.0,
             "linear": 0.09,
             "quadratic": 0.032,
@@ -372,7 +365,7 @@ def main():
     # --- NOVAS TECLAS PARA GRUPOS DE LUZES ---
     # Sugestões: KEY_Q para Taça, KEY_E para Varinha
     # keymanager.set_global_key_toggle(glfw.KEY_Q, toggle_goblet_lights) # Ligar/desligar luzes da Taça (Point + Spotlight)
-    # keymanager.set_global_key_toggle(glfw.KEY_E, toggle_wand_lights)   # Ligar/desligar luzes da Varinha (Point + Spotlight)
+    # keymanager.set_global_key_toggle(glfw.KEY_E, toggle_wand_lights)    # Ligar/desligar luzes da Varinha (Point + Spotlight)
 
 
     window.show()
@@ -415,6 +408,13 @@ def main():
                     ilumination.update_external_light_position(0, target_pos)
                     current_light_state = 0 # Para o movimento
                     print("Luz Externa Móvel: Chegou ao destino e parou.")
+        
+        # --- NOVO: ATUALIZAR A POSIÇÃO DO sphere_EX PARA SER A MESMA DA LUZ EXTERNA ---
+        # Certifique-se de que a posição da luz foi atualizada antes de usar.
+        # A variável `current_external_light_pos` ou `external_lights_data[0]["position"]`
+        # já conterá a posição mais recente da luz.
+        light_pos = external_lights_data[0]["position"]
+        sphereEx.set_position(light_pos.x, light_pos.y, light_pos.z)
 
         world_rotation(globo)
         renderer.render(light_factors["ka"], light_factors["kd"], light_factors["ks"])
