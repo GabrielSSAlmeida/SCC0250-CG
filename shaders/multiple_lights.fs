@@ -17,6 +17,8 @@ struct PointLight {
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
+
+    bool isOn;
 };
 
 struct DirLight {
@@ -25,6 +27,8 @@ struct DirLight {
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
+
+    bool isOn;
 };
 
 struct SpotLight {
@@ -39,7 +43,9 @@ struct SpotLight {
   
     vec3 ambient;
     vec3 diffuse;
-    vec3 specular;       
+    vec3 specular;
+
+    bool isOn;     
 };
 
 
@@ -162,7 +168,10 @@ void main()
     vec3 viewDir = normalize(viewPos - FragPos);
 
     // Começamos com a luz direcional.
-    vec3 result = CalcDirLight(dirLight, norm, viewDir);
+    vec3 result;
+    if (dirLight.isOn) {
+        result = CalcDirLight(dirLight, norm, viewDir);
+    }
 
     // Verificar se a câmera está DENTRO da caixa delimitadora da casa
     const float MIN_X = -3.06421f;
@@ -179,14 +188,17 @@ void main()
     if (is_camera_inside_house) {
         // Câmera está DENTRO da casa: aplicar SOMENTE luzes internas
         for (int i = 0; i < NR_INTERNAL_LIGHTS; i++) {
+            if(!internalLights[i].isOn) continue;
             result += CalcPointLight(internalLights[i], norm, FragPos, viewDir);
         }
         for (int i = 0; i < NR_INTERNAL_SPOTLIGHTS; i++) {
+            if(!internalSpotLights[i].isOn) continue;
             result += CalcSpotLight(internalSpotLights[i], norm, FragPos, viewDir);
         }
     } else {
         // Câmera está FORA da casa: aplicar SOMENTE luzes externas
         for (int i = 0; i < NR_EXTERNAL_LIGHTS; i++) {
+            if(!externalLights[i].isOn) continue;
             result += CalcPointLight(externalLights[i], norm, FragPos, viewDir);
         }
         // for (int i = 0; i < NR_EXTERNAL_SPOTLIGHTS; i++) {

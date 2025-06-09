@@ -177,7 +177,8 @@ def main():
             "specular": glm.vec3(0.0, 0.6, 1.0),  
             "constant": 1.0,
             "linear": 0.35,
-            "quadratic": 0.44
+            "quadratic": 0.44,
+            "isOn": True,
         },
         { # Varinha
             "position": glm.vec3(4.49986, -1.16163, 11.8),
@@ -187,6 +188,7 @@ def main():
             "constant": 1.0,
             "linear": 0.09,
             "quadratic": 50.0,
+            "isOn": True,
         }
 
     ]
@@ -198,7 +200,8 @@ def main():
             "specular": glm.vec3(1.0, 1.0, 1.0), 
             "constant": 1.0,
             "linear": 0.07,
-            "quadratic": 0.017 # Pode ajustar esta atenuação também
+            "quadratic": 0.017, # Pode ajustar esta atenuação também
+            "isOn": True,
         }
     ]
 
@@ -214,6 +217,7 @@ def main():
             "quadratic": 0.032,
             "cutOff": glm.cos(glm.radians(12.5)),
             "outerCutOff": glm.cos(glm.radians(15.0)),
+            "isOn": True,
         },
         { # Varinha
             "position": glm.vec3(4.49986, -1.16163, 11.8),
@@ -226,6 +230,7 @@ def main():
             "quadratic": 0.032,
             "cutOff": glm.cos(glm.radians(50.0)), 
             "outerCutOff": glm.cos(glm.radians(60.5)),
+            "isOn": True,
         }
     ]
     external_spotlight_data = [
@@ -236,6 +241,7 @@ def main():
         "direction": glm.vec3(-0.2, -1.0, -0.3),
         "ambient": glm.vec3(0.05, 0.05, 0.05),
         "diffuse": glm.vec3(0.4, 0.4, 0.4),
+        "isOn": True,
     }
 
 
@@ -253,19 +259,7 @@ def main():
         nonlocal current_light_state, moving_light_progress
         
         if current_light_state == 0: # Se está parada, começa a mover para a próxima posição
-            # Verifica qual a posição atual da luz para decidir para onde ir
-            # Vamos usar uma pequena tolerância para considerar que a luz está em pos1 ou pos2
-            
-            # ATENÇÃO: current_external_light_pos é uma variável do loop principal.
-            # Precisamos pegá-la de algum lugar ou inicializar corretamente.
-            # Para simplificar, vamos assumir que a luz começa em light_move_pos1.
-            # E a cada clique, ela alterna entre ir para pos2 ou pos1.
-            
-            # Posição atual da luz externa no array de dados
             current_external_light_visual_pos = external_lights_data[0]["position"]
-
-            # Se está perto da pos1, vai para pos2. Caso contrário, vai para pos1.
-            # Usamos uma pequena tolerância para a comparação de floats
             tolerance = 0.5 
             if glm.distance(current_external_light_visual_pos, light_move_pos1) < tolerance:
                 current_light_state = 2 # Mover para pos2
@@ -273,18 +267,112 @@ def main():
             elif glm.distance(current_external_light_visual_pos, light_move_pos2) < tolerance:
                 current_light_state = 1 # Mover para pos1
                 print("Luz Externa Móvel: Indo para Posição 1")
-            else: # Se não está em nenhuma das posições conhecidas, vai para pos1 por padrão
+            else:
                 current_light_state = 1
                 print("Luz Externa Móvel: Posição desconhecida, indo para Posição 1")
-            
-            # Reinicia o progresso da animação
             moving_light_progress = 0.0
         else:
-            # Se já está em movimento (estado 1 ou 2), um novo clique 'M' pode pará-la
             current_light_state = 0
             print("Luz Externa Móvel: Parada (movimento interrompido)")
 
     keymanager.set_global_key_toggle(glfw.KEY_M, toggle_moving_light_to_destination)
+
+    # ====== FUNÇÕES PARA LIGAR/DESLIGAR LUZES ======
+    def toggle_internal_light(idx):
+        def toggle(_=None):
+            internal_lights_data[idx]["isOn"] = not internal_lights_data[idx]["isOn"]
+            ilumination.update_internal_light_is_on(idx, internal_lights_data[idx]["isOn"]) # Chamada correta
+            print(f"Luz interna {idx} {'ligada' if internal_lights_data[idx]['isOn'] else 'desligada'}")
+        return toggle
+
+    def toggle_external_light(idx):
+        def toggle(_=None):
+            external_lights_data[idx]["isOn"] = not external_lights_data[idx]["isOn"]
+            ilumination.update_external_light_is_on(idx, external_lights_data[idx]["isOn"]) # NOVO MÉTODO
+            print(f"Luz externa {idx} {'ligada' if external_lights_data[idx]['isOn'] else 'desligada'}")
+        return toggle
+
+    def toggle_internal_spotlight(idx):
+        def toggle(_=None):
+            internal_spotlight_data[idx]["isOn"] = not internal_spotlight_data[idx]["isOn"]
+            ilumination.update_internal_spotlight_is_on(idx, internal_spotlight_data[idx]["isOn"]) # Chamada correta
+            print(f"Spotlight interna {idx} {'ligada' if internal_spotlight_data[idx]['isOn'] else 'desligada'}")
+        return toggle
+
+    def toggle_external_spotlight(idx):
+        def toggle(_=None):
+            # Descomente e use este bloco se você habilitar externalSpotLights no shader
+            # external_spotlight_data[idx]["isOn"] = not external_spotlight_data[idx]["isOn"]
+            # ilumination.update_external_spotlight_is_on(idx, external_spotlight_data[idx]["isOn"])
+            print(f"Spotlight externa {idx} {'ligada' if external_spotlight_data[idx]['isOn'] else 'desligada'}")
+        return toggle
+
+    def toggle_dir_light():
+        dir_light_data["isOn"] = not dir_light_data["isOn"]
+        ilumination.update_dir_light_is_on(dir_light_data["isOn"]) # Chamada correta
+        print(f"Luz direcional {'ligada' if dir_light_data['isOn'] else 'desligada'}")
+    
+
+    # --- NOVAS FUNÇÕES PARA LIGAR/DESLIGAR GRUPOS DE LUZES ---
+    def toggle_wand_lights():
+        # A luz da varinha é o ponto de luz interno 1 e o spotlight interno 1
+        # Vamos verificar o estado atual de uma delas para decidir se ligamos ou desligamos
+        # Se a point light da varinha estiver ligada, vamos desligar tudo. Se estiver desligada, ligar.
+        
+        # O índice 1 para internal_lights_data e internal_spotlight_data corresponde à varinha
+        # based on your current internal_lights_data and internal_spotlight_data arrays.
+        # (check the comments: { # Varinha } )
+        
+        current_state_point = internal_lights_data[1]["isOn"]
+        current_state_spot = internal_spotlight_data[1]["isOn"]
+        
+        # Decide o novo estado: se qualquer uma estiver ligada, desliga tudo; senão, liga tudo.
+        new_state = not (current_state_point or current_state_spot) 
+
+        internal_lights_data[1]["isOn"] = new_state
+        ilumination.update_internal_light_is_on(1, new_state)
+        
+        internal_spotlight_data[1]["isOn"] = new_state
+        ilumination.update_internal_spotlight_is_on(1, new_state)
+        
+        print(f"Luzes da Varinha {'ligadas' if new_state else 'desligadas'}")
+
+    def toggle_goblet_lights():
+        # A luz da taça é o ponto de luz interno 0 e o spotlight interno 0
+        # O índice 0 para internal_lights_data e internal_spotlight_data corresponde à taça
+        # (check the comments: { # Taça } )
+
+        current_state_point = internal_lights_data[0]["isOn"]
+        current_state_spot = internal_spotlight_data[0]["isOn"]
+        
+        new_state = not (current_state_point or current_state_spot)
+
+        internal_lights_data[0]["isOn"] = new_state
+        ilumination.update_internal_light_is_on(0, new_state)
+        
+        internal_spotlight_data[0]["isOn"] = new_state
+        ilumination.update_internal_spotlight_is_on(0, new_state)
+        
+        print(f"Luzes da Taça {'ligadas' if new_state else 'desligadas'}")
+
+    # ====== ATRIBUIR TECLAS ======
+    keymanager.set_global_key_toggle(glfw.KEY_1, toggle_goblet_lights) # Taça (Point + Spotlight)
+    keymanager.set_global_key_toggle(glfw.KEY_2, toggle_wand_lights) # Varinha (Point + Spotlight)
+    # Externa: 3
+    keymanager.set_global_key_toggle(glfw.KEY_3, toggle_external_light(0))
+    # Spotlights internas: 4, 5
+    # keymanager.set_global_key_toggle(glfw.KEY_4, toggle_internal_spotlight(0)) # Taça Spotlight
+    # keymanager.set_global_key_toggle(glfw.KEY_5, toggle_internal_spotlight(1)) # Varinha Spotlight
+    # Spotlights externas: 6 (se houver)
+    if len(external_spotlight_data) > 0:
+        keymanager.set_global_key_toggle(glfw.KEY_4, toggle_external_spotlight(0))
+    # Direcional: 0
+    keymanager.set_global_key_toggle(glfw.KEY_0, toggle_dir_light)
+
+    # --- NOVAS TECLAS PARA GRUPOS DE LUZES ---
+    # Sugestões: KEY_Q para Taça, KEY_E para Varinha
+    # keymanager.set_global_key_toggle(glfw.KEY_Q, toggle_goblet_lights) # Ligar/desligar luzes da Taça (Point + Spotlight)
+    # keymanager.set_global_key_toggle(glfw.KEY_E, toggle_wand_lights)   # Ligar/desligar luzes da Varinha (Point + Spotlight)
 
 
     window.show()

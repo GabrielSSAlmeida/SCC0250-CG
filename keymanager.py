@@ -31,6 +31,11 @@ key_state = {
     glfw.KEY_N: False,
     # NOVO: Tecla para a luz móvel (toggle)
     glfw.KEY_M: False,
+    glfw.KEY_1: False,
+    glfw.KEY_2: False,
+    glfw.KEY_3: False,
+    glfw.KEY_4: False,
+    glfw.KEY_0: False,
 }
 
 class KeyManager:
